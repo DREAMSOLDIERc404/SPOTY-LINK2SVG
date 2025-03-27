@@ -24,7 +24,7 @@ function displaySpotifyCode(uri) {
     var img = document.createElement('img');
     img.src = spotifyCodeUrl;
     img.alt = 'Spotify Code';
-    img.style.width = '100px'; // Modifica la larghezza a 500px
+    img.style.width = '500px'; // Modifica la larghezza a 500px
     img.style.height = 'auto';
     img.style.cursor = 'pointer'; // Change cursor to pointer to indicate clickability
     img.addEventListener('click', function() {
@@ -32,8 +32,11 @@ function displaySpotifyCode(uri) {
     });
 
     var outputDiv = document.getElementById("outputUri");
-    outputDiv.innerHTML = ''; // Clear previous content
-    outputDiv.appendChild(img);
+    outputDiv.innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG"; // Clear previous content and add text
+    
+    var previewDiv = document.getElementById("preview");
+    previewDiv.innerHTML = ''; // Clear previous content
+    previewDiv.appendChild(img);
 }
 
 function convertImageToSVG(url, filename) {

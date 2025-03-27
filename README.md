@@ -1,4 +1,4 @@
-# spotify-link-stl
+# SPOTY:LINK2STL
 
 ## Descrizione del Tool
 

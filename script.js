@@ -1,44 +1,3 @@
-function cambiaTesto() {
-    document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
-}
-
-function convertUrlToUri() {
-    var url = document.getElementById("spotifyLink").value; // Cambia l'ID a "spotifyLink"
-    var parts = url.split('/');
-    if (parts.length < 5 || parts[2] !== "open.spotify.com") {
-        document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
-        return;
-    } else {
-        document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
-    }
-
-    var type = parts[3];
-    var id = parts[4].split('?')[0]; // Remove any query parameters
-    var uri = 'spotify:' + type + ':' + id;
-    displaySpotifyCode(uri);
-    console.log("Spotify URI generato: " + uri); // Aggiungi una stampa per la console
-}
-
-function displaySpotifyCode(uri) {
-    var spotifyCodeUrl = `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${encodeURIComponent(uri)}`;
-    var img = document.createElement('img');
-    img.src = spotifyCodeUrl;
-    img.alt = 'Spotify Code';
-    img.style.width = '320px'; // Modifica la larghezza a 320px
-    img.style.height = 'auto';
-    img.style.cursor = 'pointer'; // Change cursor to pointer to indicate clickability
-    img.addEventListener('click', function() {
-        convertImageToSVG(spotifyCodeUrl, 'spotify_code.svg');
-    });
-
-    var outputDiv = document.getElementById("outputUri");
-    outputDiv.innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG"; // Clear previous content and add text
-    
-    var previewDiv = document.getElementById("preview");
-    previewDiv.innerHTML = ''; // Clear previous content
-    previewDiv.appendChild(img);
-}
-
 function convertImageToSVG(url, filename) {
     var img = new Image();
     img.crossOrigin = 'anonymous';
@@ -50,34 +9,11 @@ function convertImageToSVG(url, filename) {
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
 
-        // Get the image data
-        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        var data = imageData.data;
-
-        // Create SVG path data
-        var svgPaths = [];
-        for (var y = 0; y < canvas.height; y++) {
-            for (var x = 0; x < canvas.width; x++) {
-                var index = (y * canvas.width + x) * 4;
-                var r = data[index];
-                var g = data[index + 1];
-                var b = data[index + 2];
-                var alpha = data[index + 3];
-
-                // If the pixel is not transparent, create a path
-                if (alpha > 0) {
-                    var color = `rgb(${r},${g},${b})`;
-                    svgPaths.push(`<path d="M${x},${y} h1 v1 h-1 z" fill="${color}" />`);
-                }
-            }
-        }
-
-        // Create the SVG element
-        var svg = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="${img.width}" height="${img.height}">
-                ${svgPaths.join('')}
-            </svg>
-        `;
+        var imageData = ctx.getImageData(0, 0, img.width, img.height);
+        var potrace = new Potrace();
+        potrace.loadImageData(imageData);
+        potrace.process();
+        var svg = potrace.getSVG();
 
         var blob = new Blob([svg], {type: 'image/svg+xml'});
         var a = document.createElement('a');
@@ -89,4 +25,5 @@ function convertImageToSVG(url, filename) {
     };
 }
 
+// Aggiungi un listener per il bottone di submit
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);

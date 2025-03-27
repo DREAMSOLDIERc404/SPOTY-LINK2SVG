@@ -22,9 +22,23 @@ function displaySpotifyCode(uri) {
     img.alt = 'Spotify Code';
     img.style.width = '1000px';
     img.style.height = 'auto';
+    img.style.cursor = 'pointer'; // Change cursor to pointer to indicate clickability
+    img.addEventListener('click', function() {
+        downloadImage(spotifyCodeUrl, 'spotify_code.png');
+    });
+
     var outputDiv = document.getElementById("outputUri");
     outputDiv.innerHTML = ''; // Clear previous content
     outputDiv.appendChild(img);
+}
+
+function downloadImage(url, filename) {
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);

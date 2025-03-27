@@ -1,7 +1,7 @@
 # SPOTY:LINK2SVG
 
 ## LINK AL SITO 
-ACCEDI A QUESTO [LINK] (https://dreamsoldierc404.github.io/SPOTY-LINK2SVG/)
+ACCEDI A QUESTO [LINK](https://dreamsoldierc404.github.io/SPOTY-LINK2SVG/)
 
 ## Descrizione del Tool
 

@@ -12,9 +12,10 @@
     </header>
     <main>
         <div id="demo">Inserisci un link Spotify:</div>
-        <input type="text" id="spotifyLink" placeholder="https://open.spotify.com/..." />
-        <button onclick="generateSpotifyURI()">Genera URI Spotify</button>
+        <input type="text" id="spotifyLink" placeholder="https://open.spotify.com/track/..." />
+        <button onclick="convertUrlToUri()">Genera URI Spotify</button> <!-- Assicurati che la funzione chiamata sia corretta -->
         <div id="outputUri"></div>
+        <div id="preview"></div> <!-- Aggiungi questa linea -->
     </main>
     <script src="script.js"></script>
 </body>

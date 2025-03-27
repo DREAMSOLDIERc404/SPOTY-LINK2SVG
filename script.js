@@ -8,16 +8,15 @@ function convertUrlToUri() {
     if (parts.length < 5 || parts[2] !== "open.spotify.com") {
         document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
         return;
+    } else {
+        document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
     }
-    else {
-        return; document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
-        return;  
-        return; 
-    }
+
     var type = parts[3];
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;
     displaySpotifyCode(uri);
+    console.log("Spotify URI generato: " + uri); // Aggiungi una stampa per la console
 }
 
 function displaySpotifyCode(uri) {

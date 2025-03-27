@@ -3,7 +3,7 @@ function cambiaTesto() {
 }
 
 function convertUrlToUri() {
-    var url = document.getElementById("urlInput").value;
+    var url = document.getElementById("spotifyLink").value; // Cambia l'ID a "spotifyLink"
     var parts = url.split('/');
     if (parts.length < 5 || parts[2] !== "open.spotify.com") {
         document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
@@ -13,6 +13,7 @@ function convertUrlToUri() {
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;
     displaySpotifyCode(uri);
+    displayPreview(url); // Aggiungi questa linea
 }
 
 function displaySpotifyCode(uri) {
@@ -30,6 +31,19 @@ function displaySpotifyCode(uri) {
     var outputDiv = document.getElementById("outputUri");
     outputDiv.innerHTML = ''; // Clear previous content
     outputDiv.appendChild(img);
+}
+
+function displayPreview(url) {
+    var iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.width = "300";
+    iframe.height = "380";
+    iframe.frameBorder = "0";
+    iframe.allow = "encrypted-media";
+
+    var previewDiv = document.getElementById("preview");
+    previewDiv.innerHTML = ''; // Clear previous content
+    previewDiv.appendChild(iframe);
 }
 
 function downloadImage(url, filename) {

@@ -9,6 +9,11 @@ function convertUrlToUri() {
         document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
         return;
     }
+    else {
+        return; document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
+        return;  
+        return; 
+    }
     var type = parts[3];
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;

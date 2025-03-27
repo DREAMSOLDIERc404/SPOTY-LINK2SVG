@@ -1,8 +1,8 @@
-# SPOTY:LINK2STL
+# SPOTY:LINK2SVG
 
 ## Descrizione del Tool
 
-Questo tool trasforma un URI di Spotify in un file STL che può essere caricato nei portachiavi dell'editor Idea Maker. Questo ti permette di creare portachiavi personalizzati con il link di Spotify incorporato.
+Questo tool trasforma un URI in un link Spotify .SVG che può essere caricato nei portachiavi dell'editor Idea Maker. Questo ti permette di creare portachiavi personalizzati con il link di Spotify incorporato.
 
 ## Cos'è un URI di Spotify?
 
@@ -14,7 +14,7 @@ Esempio di URI di Spotify:
 - Artista: `spotify:artist:0OdUWJ0sBjDrqHygGUXeCF`
 - Playlist: `spotify:playlist:37i9dQZF1DXcBWIGoYBM5M`
 
-Gli URI di Spotify sono utili per condividere ed embeddare contenuti Spotify in altre applicazioni o siti web.
+Gli URI di Spotify sono usati per generare Spotify link!
 
 ## Foto di Spotify Link
 

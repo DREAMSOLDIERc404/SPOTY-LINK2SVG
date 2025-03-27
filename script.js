@@ -13,7 +13,7 @@ function convertUrlToUri() {
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;
     displaySpotifyCode(uri);
-    displayPreview(url); // Aggiungi questa linea
+    
 }
 
 function displaySpotifyCode(uri) {

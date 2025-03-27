@@ -33,19 +33,6 @@ function displaySpotifyCode(uri) {
     outputDiv.appendChild(img);
 }
 
-function displayPreview(url) {
-    var iframe = document.createElement('iframe');
-    iframe.src = url;
-    iframe.width = "300";
-    iframe.height = "380";
-    iframe.frameBorder = "0";
-    iframe.allow = "encrypted-media";
-
-    var previewDiv = document.getElementById("preview");
-    previewDiv.innerHTML = ''; // Clear previous content
-    previewDiv.appendChild(iframe);
-}
-
 function downloadImage(url, filename) {
     var a = document.createElement('a');
     a.href = url;

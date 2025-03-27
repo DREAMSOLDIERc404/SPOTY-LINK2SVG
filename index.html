@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,10 +11,11 @@
         <h1>Spotify Link STL</h1>
     </header>
     <main>
-        <div id="demo">Inserisci il tuo URI di Spotify:</div>
-        <input type="text" id="spotifyUriInput" placeholder="spotify:track:6rqhFgbbKwnb9MLmUQDhG6">
-        <button onclick="convertUri()">Converti</button>
+        <div id="demo">Inserisci un link Spotify:</div>
+        <input type="text" id="spotifyLink" placeholder="https://open.spotify.com/track/..." />
+        <button onclick="generateSpotifyURI()">Genera URI Spotify</button>
         <div id="outputUri"></div>
     </main>
+    <script src="script.js"></script>
 </body>
 </html>

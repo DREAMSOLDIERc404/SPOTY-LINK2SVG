@@ -1,16 +1,54 @@
+/* Palette di colori di Spotify */
+:root {
+    --spotify-green: #1DB954;
+    --spotify-black: #191414;
+    --spotify-white: #FFFFFF;
+    --spotify-grey: #B3B3B3;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
     margin: 0;
-    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: var(--spotify-black);
+    color: var(--spotify-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+header {
+    background-color: var(--spotify-green);
+    width: 100%;
+    text-align: center;
+    padding: 1rem 0;
 }
 
 h1 {
-    color: #333;
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+main {
+    text-align: center;
+}
+
+#demo {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 button {
-    padding: 10px 20px;
-    font-size: 16px;
+    background-color: var(--spotify-green);
+    border: none;
+    color: var(--spotify-white);
+    padding: 1rem 2rem;
+    font-size: 1rem;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: var(--spotify-grey);
 }

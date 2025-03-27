@@ -13,7 +13,6 @@ function convertUrlToUri() {
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;
     displaySpotifyCode(uri);
-    
 }
 
 function displaySpotifyCode(uri) {
@@ -25,7 +24,7 @@ function displaySpotifyCode(uri) {
     img.style.height = 'auto';
     img.style.cursor = 'pointer'; // Change cursor to pointer to indicate clickability
     img.addEventListener('click', function() {
-        downloadImage(spotifyCodeUrl, 'spotify_code.png');
+        convertImageToSVG(spotifyCodeUrl, 'spotify_code.svg');
     });
 
     var outputDiv = document.getElementById("outputUri");
@@ -33,13 +32,30 @@ function displaySpotifyCode(uri) {
     outputDiv.appendChild(img);
 }
 
-function downloadImage(url, filename) {
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+function convertImageToSVG(url, filename) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = url;
+    img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        var svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${img.width}" height="${img.height}">
+                <image href="${canvas.toDataURL('image/png')}" x="0" y="0" width="${img.width}" height="${img.height}"/>
+            </svg>
+        `;
+        var blob = new Blob([svg], {type: 'image/svg+xml'});
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
 }
 
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);

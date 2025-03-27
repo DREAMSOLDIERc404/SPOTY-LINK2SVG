@@ -24,7 +24,7 @@ function displaySpotifyCode(uri) {
     var img = document.createElement('img');
     img.src = spotifyCodeUrl;
     img.alt = 'Spotify Code';
-    img.style.width = '250px'; // Modifica la larghezza a 500px
+    img.style.width = '320px'; // Modifica la larghezza a 320px
     img.style.height = 'auto';
     img.style.cursor = 'pointer'; // Change cursor to pointer to indicate clickability
     img.addEventListener('click', function() {

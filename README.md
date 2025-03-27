@@ -14,8 +14,8 @@ Gli URI di Spotify sono utili per condividere ed embeddare contenuti Spotify in 
 
 ## Foto di Spotify Link
 
-![Spotify Link 1](path/to/your/image1.jpg)
-![Spotify Link 2](path/to/your/image2.jpg)
+![Spotify Link 1](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz1zqwz0JklKW7iPG9oeEXjj2jpiw6frHJww&usqp=CAU)
+![Spotify Link 2](https://scannables.scdn.co/uri/plain/jpeg/FFFFFF/black/640/spotify:track:4QAVzoQziO6ZobIjZtTFwo)
 
 ## Descrizione del Tool
 

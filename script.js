@@ -4,27 +4,30 @@ function cambiaTesto() {
 
 function convertUrlToUri() {
     var url = document.getElementById("urlInput").value;
+    console.log("URL inserito:", url);
     var parts = url.split('/');
     if (parts.length < 5 || parts[2] !== "open.spotify.com") {
         document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
+        console.error("URL non valido");
         return;
     }
     var type = parts[3];
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;
-    displaySpotifyCode(uri);
+    console.log("URI generato:", uri);
+    downloadSpotifyCode(uri);
 }
 
-function displaySpotifyCode(uri) {
+function downloadSpotifyCode(uri) {
     var spotifyCodeUrl = `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${encodeURIComponent(uri)}`;
-    var img = document.createElement('img');
-    img.src = spotifyCodeUrl;
-    img.alt = 'Spotify Code';
-    img.style.width = '1000px';
-    img.style.height = 'auto';
-    var outputDiv = document.getElementById("outputUri");
-    outputDiv.innerHTML = ''; // Clear previous content
-    outputDiv.appendChild(img);
+    console.log("URL dell'immagine:", spotifyCodeUrl);
+    var link = document.createElement('a');
+    link.href = spotifyCodeUrl;
+    link.download = 'spotify_code.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    console.log("Download avviato");
 }
 
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);

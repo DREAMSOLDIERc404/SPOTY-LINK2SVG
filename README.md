@@ -18,5 +18,5 @@ Gli URI di Spotify sono usati per generare Spotify link!
 
 ## Foto di Spotify Link
 
-![Spotify Link 1](https://scannables.scdn.co/uri/plain/png/000000/white/1000/spotify%3Atrack%3A1kKccj5wYXTj3gTpUIMoac)
-![Spotify Link 2](https://scannables.scdn.co/uri/plain/jpeg/FFFFFF/black/640/spotify:track:4QAVzoQziO6ZobIjZtTFwo)
+<img src="https://scannables.scdn.co/uri/plain/png/000000/white/1000/spotify%3Atrack%3A1kKccj5wYXTj3gTpUIMoac" alt="Spotify Link 1" width="200"/>
+<img src="https://scannables.scdn.co/uri/plain/jpeg/FFFFFF/black/640/spotify:track:4QAVzoQziO6ZobIjZtTFwo" alt="Spotify Link 2" width="200"/>

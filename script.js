@@ -50,11 +50,35 @@ function convertImageToSVG(url, filename) {
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
 
+        // Get the image data
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var data = imageData.data;
+
+        // Create SVG path data
+        var svgPaths = [];
+        for (var y = 0; y < canvas.height; y++) {
+            for (var x = 0; x < canvas.width; x++) {
+                var index = (y * canvas.width + x) * 4;
+                var r = data[index];
+                var g = data[index + 1];
+                var b = data[index + 2];
+                var alpha = data[index + 3];
+
+                // If the pixel is not transparent, create a path
+                if (alpha > 0) {
+                    var color = `rgb(${r},${g},${b})`;
+                    svgPaths.push(`<path d="M${x},${y} h1 v1 h-1 z" fill="${color}" />`);
+                }
+            }
+        }
+
+        // Create the SVG element
         var svg = `
             <svg xmlns="http://www.w3.org/2000/svg" width="${img.width}" height="${img.height}">
-                <image href="${canvas.toDataURL('image/png')}" x="0" y="0" width="${img.width}" height="${img.height}"/>
+                ${svgPaths.join('')}
             </svg>
         `;
+
         var blob = new Blob([svg], {type: 'image/svg+xml'});
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);

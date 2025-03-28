@@ -5,7 +5,7 @@ ACCEDI A QUESTO [LINK](https://dreamsoldierc404.github.io/SPOTY-LINK2SVG/)
 
 ## Descrizione del Tool
 
-Questo tool trasforma un URI in un link Spotify .SVG che può essere caricato nei portachiavi dell'editor MakerWorld. Questo ti permette di creare portachiavi personalizzati con il link di Spotify incorporato.
+Questo tool trasforma un URL spotify normalissima in un link Spotify .SVG che può essere caricato nei portachiavi dell'editor MakerWorld. Questo ti permette di creare portachiavi personalizzati con il link di Spotify incorporato.
 
 ## Cos'è un URI di Spotify?
 

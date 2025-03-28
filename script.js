@@ -1,3 +1,4 @@
+import { vectorizer } from 'vectorizer';
 
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
@@ -44,7 +45,7 @@ function convertImageToSVG(url, filename) {
     var img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = url;
-    img.onload = function() {
+    img.onload = async function() {
         var canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
@@ -52,27 +53,9 @@ function convertImageToSVG(url, filename) {
         ctx.drawImage(img, 0, 0);
 
         var imageData = ctx.getImageData(0, 0, img.width, img.height);
-        var potrace = new Potrace();
-        potrace.loadImageData(imageData);
-        potrace.process();
-        var svgPathData = potrace.getPathTag(); // Ottieni solo il path
+        var svgData = await vectorizer(imageData);
 
-        // Costruisci il contenuto dell'SVG con il DOCTYPE e il namespace
-        var svgContent = `
-            <?xml version="1.0" standalone="no"?>
-            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
-            "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-            <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-            width="${img.width}" height="${img.height}" viewBox="0 0 ${img.width} ${img.height}"
-            preserveAspectRatio="xMidYMid meet">
-            <g transform="translate(0,${img.height}) scale(0.1,-0.1)"
-            fill="#000000" stroke="none">
-            ${svgPathData}
-            </g>
-            </svg>
-        `;
-
-        var blob = new Blob([svgContent], {type: 'image/svg+xml'});
+        var blob = new Blob([svgData], {type: 'image/svg+xml'});
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = filename;

@@ -1,0 +1,29 @@
+{
+  "name": "spoty-link2svg",
+  "version": "1.0.0",
+  "description": "Convert link in spotify-link.svg",
+  "main": "script.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/DREAMSOLDIERc404/SPOTY-LINK2SVG.git"
+  },
+  "keywords": [
+    "3dPrint",
+    "conversion",
+    "graphic"
+  ],
+  "author": "Lorenzo Boccuzzi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DREAMSOLDIERc404/SPOTY-LINK2SVG/issues"
+  },
+  "homepage": "https://github.com/DREAMSOLDIERc404/SPOTY-LINK2SVG#readme",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "node-fetch": "^3.3.2",
+    "potrace": "^2.1.8"
+  }
+}

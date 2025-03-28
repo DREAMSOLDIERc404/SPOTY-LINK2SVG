@@ -68,5 +68,3 @@ function convertImageToSVG(url, filename) {
 
 // Aggiungi un listener per il bottone di submit
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);
-
-document.getElementById('submitButton').addEventListener('click', convertUrlToUri);

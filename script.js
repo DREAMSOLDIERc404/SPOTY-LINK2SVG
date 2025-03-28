@@ -1,3 +1,7 @@
+const potrace = require('potrace');
+const fs = require('fs');
+const fetch = require('node-fetch');
+
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
 }
@@ -39,30 +43,29 @@ function displaySpotifyCode(uri) {
     previewDiv.appendChild(img);
 }
 
-function convertImageToSVG(url, filename) {
-    var img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = url;
-    img.onload = function() {
-        var canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
+async function convertImageToSVG(url, filename) {
+    try {
+        const response = await fetch(url);
+        const buffer = await response.buffer();
+        const tempFile = 'temp.png';
+        fs.writeFileSync(tempFile, buffer);
 
-        var svg = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="${img.width}" height="${img.height}">
-                <image href="${canvas.toDataURL('image/png')}" x="0" y="0" width="${img.width}" height="${img.height}"/>
-            </svg>
-        `;
-        var blob = new Blob([svg], {type: 'image/svg+xml'});
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    };
+        potrace.trace(tempFile, { turdSize: 100, alphaMax: 0.4 }, function (err, svg) {
+            if (err) throw err;
+            var blob = new Blob([svg], { type: 'image/svg+xml' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Rimuove il file temporaneo
+            fs.unlinkSync(tempFile);
+        });
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);

@@ -1,10 +1,14 @@
-import { vectorizer } from 'vectorizer'; // Assicurati che l'importazione di vectorizer sia corretta
+import { vectorize } from 'vectorizer'; // Assicurati che l'importazione di vectorize sia corretta
+
+console.log("script.js caricato correttamente");
+console.log("vectorize", vectorize);
 
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
 }
 
 function convertUrlToUri() {
+    console.log("Bottone cliccato");
     var url = document.getElementById("spotifyLink").value; // Cambia l'ID a "spotifyLink"
     var parts = url.split('/');
     if (parts.length < 5 || parts[2] !== "open.spotify.com") {
@@ -18,6 +22,7 @@ function convertUrlToUri() {
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;
     displaySpotifyCode(uri);
+    console.log("Spotify URI generato: " + uri); // Aggiungi una stampa per la console
 }
 
 function displaySpotifyCode(uri) {
@@ -52,7 +57,7 @@ function convertImageToSVG(url, filename) {
         ctx.drawImage(img, 0, 0);
 
         var imageData = ctx.getImageData(0, 0, img.width, img.height);
-        var svgData = await vectorizer(imageData);
+        var svgData = await vectorize(imageData); // Utilizza la funzione vectorize
 
         var blob = new Blob([svgData], {type: 'image/svg+xml'});
         var a = document.createElement('a');

@@ -43,25 +43,21 @@ async function convertImageToSVG(url, filename) {
     try {
         const response = await fetch(url);
         const blob = await response.blob();
-        const reader = new FileReader();
+        const file = new File([blob], 'image.png', { type: 'image/png' });
 
-        reader.onloadend = function() {
-            const base64data = reader.result.split(',')[1];
-            const vectorizer = new Vectorizer();
+        let convertApi = ConvertApi.auth('secret_tppARtyrFCgZPVPM');
+        let params = convertApi.createParams();
+        params.add('File', file);
 
-            vectorizer.trace(base64data, { turdSize: 100, alphaMax: 0.4 }, function (err, svg) {
-                if (err) throw err;
-                var blob = new Blob([svg], { type: 'image/svg+xml' });
-                var a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            });
-        };
+        let result = await convertApi.convert('png', 'svg', params);
 
-        reader.readAsDataURL(blob);
+        var a = document.createElement('a');
+        a.href = result.files[0].Url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
     } catch (err) {
         console.error(err);
     }

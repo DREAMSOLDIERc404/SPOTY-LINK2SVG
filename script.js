@@ -1,7 +1,7 @@
 const potrace = require('potrace');
 const fs = require('fs');
 const fetch = require('node-fetch');
-
+    
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
 }

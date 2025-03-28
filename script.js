@@ -9,18 +9,20 @@ function cambiaTesto() {
 function convertUrlToUri() {
     var url = document.getElementById("spotifyLink").value; // Cambia l'ID a "spotifyLink"
     var parts = url.split('/');
+    var outputDiv = document.getElementById("outputUri");
+
     if (parts.length < 5 || parts[2] !== "open.spotify.com") {
-        document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
+        outputDiv.innerHTML = 'Invalid Spotify URL.';
         return;
     } else {
-        document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
+        outputDiv.innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
     }
 
     var type = parts[3];
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;
     displaySpotifyCode(uri);
-    console.log("Spotify URI generato: " + uri); // Aggiungi una stampa per la console
+    outputDiv.innerHTML = "Spotify URI generato: " + uri; // Log message
 }
 
 function displaySpotifyCode(uri) {
@@ -37,6 +39,7 @@ function displaySpotifyCode(uri) {
 
     var outputDiv = document.getElementById("outputUri");
     outputDiv.innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG"; // Clear previous content and add text
+    outputDiv.innerHTML = "Spotify Code URL: " + spotifyCodeUrl; // Log message
     
     var previewDiv = document.getElementById("preview");
     previewDiv.innerHTML = ''; // Clear previous content
@@ -44,11 +47,13 @@ function displaySpotifyCode(uri) {
 }
 
 async function convertImageToSVG(url, filename) {
+    var outputDiv = document.getElementById("outputUri");
     try {
         const response = await fetch(url);
         const buffer = await response.buffer();
         const tempFile = 'temp.png';
         fs.writeFileSync(tempFile, buffer);
+        outputDiv.innerHTML = "Image fetched and saved as temp.png"; // Log message
 
         potrace.trace(tempFile, { turdSize: 100, alphaMax: 0.4 }, function (err, svg) {
             if (err) throw err;
@@ -62,9 +67,11 @@ async function convertImageToSVG(url, filename) {
 
             // Rimuove il file temporaneo
             fs.unlinkSync(tempFile);
+            outputDiv.innerHTML = "SVG file created and downloaded"; // Log message
         });
     } catch (err) {
         console.error(err);
+        outputDiv.innerHTML = "Error: " + err.message; // Log message
     }
 }
 

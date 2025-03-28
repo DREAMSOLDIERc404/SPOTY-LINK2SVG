@@ -51,12 +51,28 @@ function convertImageToSVG(url, filename) {
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
 
-        var svg = `
-            <svg xmlns="http://www.w3.org/TR/SVG11/" width="${img.width}" height="${img.height}">
-                <image href="${canvas.toDataURL('image/png')}" x="0" y="0" width="${img.width}" height="${img.height}"/>
+        var imageData = ctx.getImageData(0, 0, img.width, img.height);
+        var potrace = new Potrace();
+        potrace.loadImageData(imageData);
+        potrace.process();
+        var svgPathData = potrace.getPathTag(); // Ottieni solo il path
+
+        // Costruisci il contenuto dell'SVG con il DOCTYPE e il namespace
+        var svgContent = `
+            <?xml version="1.0" standalone="no"?>
+            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+            "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+            <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+            width="${img.width}" height="${img.height}" viewBox="0 0 ${img.width} ${img.height}"
+            preserveAspectRatio="xMidYMid meet">
+            <g transform="translate(0,${img.height}) scale(0.1,-0.1)"
+            fill="#000000" stroke="none">
+            ${svgPathData}
+            </g>
             </svg>
         `;
-        var blob = new Blob([svg], {type: 'image/svg+xml'});
+
+        var blob = new Blob([svgContent], {type: 'image/svg+xml'});
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = filename;

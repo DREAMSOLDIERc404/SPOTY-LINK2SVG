@@ -1,14 +1,10 @@
 import { vectorizer } from 'vectorizer'; // Assicurati che l'importazione di vectorizer sia corretta
 
-console.log("script.js caricato correttamente");
-console.log("vectorizer", vectorizer);
-
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
 }
 
 function convertUrlToUri() {
-    console.log("Bottone cliccato");
     var url = document.getElementById("spotifyLink").value; // Cambia l'ID a "spotifyLink"
     var parts = url.split('/');
     if (parts.length < 5 || parts[2] !== "open.spotify.com") {
@@ -22,7 +18,6 @@ function convertUrlToUri() {
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;
     displaySpotifyCode(uri);
-    console.log("Spotify URI generato: " + uri); // Aggiungi una stampa per la console
 }
 
 function displaySpotifyCode(uri) {

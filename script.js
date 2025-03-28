@@ -1,7 +1,3 @@
-const potrace = require('potrace');
-const fs = require('fs');
-const fetch = require('node-fetch');
-    
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
 }
@@ -46,23 +42,26 @@ function displaySpotifyCode(uri) {
 async function convertImageToSVG(url, filename) {
     try {
         const response = await fetch(url);
-        const buffer = await response.buffer();
-        const tempFile = 'temp.png';
-        fs.writeFileSync(tempFile, buffer);
+        const blob = await response.blob();
+        const reader = new FileReader();
 
-        potrace.trace(tempFile, { turdSize: 100, alphaMax: 0.4 }, function (err, svg) {
-            if (err) throw err;
-            var blob = new Blob([svg], { type: 'image/svg+xml' });
-            var a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        reader.onloadend = function() {
+            const base64data = reader.result.split(',')[1];
+            const vectorizer = new Vectorizer();
 
-            // Rimuove il file temporaneo
-            fs.unlinkSync(tempFile);
-        });
+            vectorizer.trace(base64data, { turdSize: 100, alphaMax: 0.4 }, function (err, svg) {
+                if (err) throw err;
+                var blob = new Blob([svg], { type: 'image/svg+xml' });
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        };
+
+        reader.readAsDataURL(blob);
     } catch (err) {
         console.error(err);
     }

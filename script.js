@@ -1,14 +1,8 @@
-import { vectorize } from 'vectorizer'; // Assicurati che l'importazione di vectorize sia corretta
-
-console.log("script.js caricato correttamente");
-console.log("vectorize", vectorize);
-
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
 }
 
 function convertUrlToUri() {
-    console.log("Bottone cliccato");
     var url = document.getElementById("spotifyLink").value; // Cambia l'ID a "spotifyLink"
     var parts = url.split('/');
     if (parts.length < 5 || parts[2] !== "open.spotify.com") {
@@ -49,17 +43,19 @@ function convertImageToSVG(url, filename) {
     var img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = url;
-    img.onload = async function() {
+    img.onload = function() {
         var canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
 
-        var imageData = ctx.getImageData(0, 0, img.width, img.height);
-        var svgData = await vectorize(imageData); // Utilizza la funzione vectorize
-
-        var blob = new Blob([svgData], {type: 'image/svg+xml'});
+        var svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${img.width}" height="${img.height}">
+                <image href="${canvas.toDataURL('image/png')}" x="0" y="0" width="${img.width}" height="${img.height}"/>
+            </svg>
+        `;
+        var blob = new Blob([svg], {type: 'image/svg+xml'});
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = filename;

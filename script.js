@@ -1,10 +1,14 @@
-import { vectorize } from 'vectorizer';
+import { vectorizer } from 'vectorizer'; // Assicurati che l'importazione di vectorizer sia corretta
+
+console.log("script.js caricato correttamente");
+console.log("vectorizer", vectorizer);
 
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
 }
 
 function convertUrlToUri() {
+    console.log("Bottone cliccato");
     var url = document.getElementById("spotifyLink").value; // Cambia l'ID a "spotifyLink"
     var parts = url.split('/');
     if (parts.length < 5 || parts[2] !== "open.spotify.com") {

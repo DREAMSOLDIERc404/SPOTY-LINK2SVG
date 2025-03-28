@@ -1,4 +1,4 @@
-//import { vectorizer } from 'vectorizer';
+import { vectorize } from 'vectorizer';
 
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";

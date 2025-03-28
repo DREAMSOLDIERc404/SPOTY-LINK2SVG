@@ -1,3 +1,7 @@
+const potrace = require('potrace');
+const fs = require('fs');
+const fetch = require('node-fetch');
+
 function cambiaTesto() {
     document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
 }
@@ -42,22 +46,23 @@ function displaySpotifyCode(uri) {
 async function convertImageToSVG(url, filename) {
     try {
         const response = await fetch(url);
-        const blob = await response.blob();
-        const file = new File([blob], 'image.png', { type: 'image/png' });
+        const buffer = await response.buffer();
+        const tempFile = 'temp.png';
+        fs.writeFileSync(tempFile, buffer);
 
-        let convertApi = ConvertApi.auth('secret_tppARtyrFCgZPVPM');
-        let params = convertApi.createParams();
-        params.add('File', file);
+        potrace.trace(tempFile, { turdSize: 100, alphaMax: 0.4 }, function (err, svg) {
+            if (err) throw err;
+            var blob = new Blob([svg], { type: 'image/svg+xml' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
 
-        let result = await convertApi.convert('png', 'svg', params);
-
-        var a = document.createElement('a');
-        a.href = result.files[0].Url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
+            // Rimuove il file temporaneo
+            fs.unlinkSync(tempFile);
+        });
     } catch (err) {
         console.error(err);
     }

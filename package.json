@@ -1,0 +1,24 @@
+{
+  "name": "spoty-link2svg",
+  "version": "1.0.0",
+  "description": "generatore link spotify svg",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/DREAMSOLDIERc404/SPOTY-LINK2SVG.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DREAMSOLDIERc404/SPOTY-LINK2SVG/issues"
+  },
+  "homepage": "https://github.com/DREAMSOLDIERc404/SPOTY-LINK2SVG#readme",
+  "dependencies": {
+    "fetch": "^1.1.0",
+    "fs": "^0.0.1-security",
+    "potrace": "^2.1.8"
+  }
+}

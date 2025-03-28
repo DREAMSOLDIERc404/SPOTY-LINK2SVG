@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "fetch": "^1.1.0",
-    "fs": "^0.0.1-security",
-    "potrace": "^2.1.8"
-  }
-}

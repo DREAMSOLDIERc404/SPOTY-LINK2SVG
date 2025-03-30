@@ -9,7 +9,7 @@ function convertUrlToUri() {
         document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
         return;
     } else {
-        document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
+        document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'IMMAGINE";
     }
 
     var type = parts[3];
@@ -28,36 +28,24 @@ function displaySpotifyCode(uri) {
     img.style.height = 'auto';
     img.style.cursor = 'pointer'; // Cambia il cursore a puntatore per indicare la cliccabilità
     img.addEventListener('click', function() {
-        convertImageToSVG(spotifyCodeUrl, 'spotify_code.svg');
+        downloadImage(spotifyCodeUrl, 'spotify_code.png');
     });
 
     var outputDiv = document.getElementById("outputUri");
-    outputDiv.innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG"; // Pulisci il contenuto precedente e aggiungi il testo
+    outputDiv.innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'IMMAGINE"; // Pulisci il contenuto precedente e aggiungi il testo
     
     var previewDiv = document.getElementById("preview");
     previewDiv.innerHTML = ''; // Pulisci il contenuto precedente
     previewDiv.appendChild(img);
 }
 
-async function convertImageToSVG(url, filename) {
-    try {
-        const response = await fetch(url);
-        const buffer = await response.arrayBuffer();
-        const blob = new Blob([buffer], { type: 'image/png' });
-
-        potrace.trace(blob, { turdSize: 100, alphaMax: 0.4 }, function (err, svg) {
-            if (err) throw err;
-            var svgBlob = new Blob([svg], { type: 'image/svg+xml' });
-            var a = document.createElement('a');
-            a.href = URL.createObjectURL(svgBlob);
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        });
-    } catch (err) {
-        console.error(err);
-    }
+function downloadImage(url, filename) {
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);

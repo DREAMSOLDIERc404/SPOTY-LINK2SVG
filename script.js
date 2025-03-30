@@ -33,7 +33,7 @@ function displaySpotifyCode(uri) {
 
                 var formData = new FormData();
                 formData.append("Fl", "21650");
-                formData.append("F", "spcode.png", blob); // Attach the image blob
+                formData.append("F", blob, "spcode.png"); // Attach the image blob
                 formData.append("C", "en");
                 formData.append("A", "False");
                 formData.append("V", "False");
@@ -68,16 +68,10 @@ function displaySpotifyCode(uri) {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.blob())
-                .then(blob => {
-                    var url = window.URL.createObjectURL(blob);
-                    var a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    a.download = 'converted_file.stl';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
+                .then(response => response.text()) // Change to response.text() to get the response as text
+                .then(data => {
+                    var outputDiv = document.getElementById("outputUri");
+                    outputDiv.innerText = data; // Print the response text to the outputDiv
                 })
                 .catch((error) => {
                     console.error('Error:', error);

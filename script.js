@@ -24,14 +24,20 @@ function displaySpotifyCode(uri) {
     img.style.height = 'auto';
     img.style.cursor = 'pointer'; // Change cursor to pointer to indicate clickability
 
-    // Aggiungere un link di download
     img.addEventListener('click', function() {
-        var link = document.createElement('a');
-        link.href = spotifyCodeUrl;
-        link.download = 'spotify_code.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        fetch(spotifyCodeUrl)
+            .then(response => response.blob())
+            .then(blob => {
+                var reader = new FileReader();
+                reader.onload = function() {
+                    var asciiContent = reader.result.split('').map(function (char) {
+                        return char.charCodeAt(0) > 127 ? '?' : char;
+                    }).join('');
+                    var outputDiv = document.getElementById("outputUri");
+                    outputDiv.innerHTML = `<pre>${asciiContent}</pre>`;
+                }
+                reader.readAsText(blob);
+            });
     });
 
     var outputDiv = document.getElementById("outputUri");

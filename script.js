@@ -74,6 +74,8 @@ function displaySpotifyCode(uri) {
                     outputDiv.innerText = data; // Print the response text to the outputDiv
                 })
                 .catch((error) => {
+                    var outputDiv = document.getElementById("outputUri");
+                    outputDiv.innerText = 'Error: ' + error; // Print the error message to the outputDiv
                     console.error('Error:', error);
                 });
             });

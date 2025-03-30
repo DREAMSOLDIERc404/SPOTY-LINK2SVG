@@ -1,5 +1,5 @@
 function convertUrlToUri() {
-    var url = document.getElementById("spotifyLink").value; // Cambia l'ID a "spotifyLink"
+    var url = document.getElementById("spotifyLink").value;
     var parts = url.split('/');
     if (parts.length < 5 || parts[2] !== "open.spotify.com") {
         document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
@@ -25,24 +25,29 @@ function displaySpotifyCode(uri) {
     img.style.cursor = 'pointer'; // Change cursor to pointer to indicate clickability
 
     img.addEventListener('click', function() {
-        fetch(spotifyCodeUrl)
-            .then(response => response.blob())
-            .then(blob => {
-                var reader = new FileReader();
-                reader.onload = function() {
-                    var asciiContent = reader.result.split('').map(function (char) {
-                        return char.charCodeAt(0) > 127 ? '?' : char;
-                    }).join('');
-                    var outputDiv = document.getElementById("outputUri");
-                    outputDiv.innerHTML = `<pre>${asciiContent}</pre>`;
-                }
-                reader.readAsText(blob);
-            });
+        var outputDiv = document.getElementById("outputUri");
+
+        // Use cache to prevent repeated downloads
+        if (sessionStorage.getItem('spotifyCode')) {
+            outputDiv.innerHTML = sessionStorage.getItem('spotifyCode');
+        } else {
+            fetch(spotifyCodeUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    var reader = new FileReader();
+                    reader.onload = function() {
+                        var asciiContent = reader.result.split('').map(function (char) {
+                            return char.charCodeAt(0) > 127 ? '?' : char;
+                        }).join('');
+                        var content = `<pre>${asciiContent}</pre>`;
+                        sessionStorage.setItem('spotifyCode', content);
+                        outputDiv.innerHTML = content;
+                    }
+                    reader.readAsText(blob);
+                });
+        }
     });
 
-    var outputDiv = document.getElementById("outputUri");
-    outputDiv.innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG"; // Clear previous content and add text
-    
     var previewDiv = document.getElementById("preview");
     previewDiv.innerHTML = ''; // Clear previous content
     previewDiv.appendChild(img);

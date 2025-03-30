@@ -33,7 +33,7 @@ function displaySpotifyCode(uri) {
 
                 var formData = new FormData();
                 formData.append("Fl", "21650");
-                formData.append("F", blob, "spcode.png"); // Attach the image blob
+                formData.append("F", "spcode.png", blob); // Attach the image blob
                 formData.append("C", "en");
                 formData.append("A", "False");
                 formData.append("V", "False");

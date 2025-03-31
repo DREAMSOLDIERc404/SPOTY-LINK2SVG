@@ -1,15 +1,3 @@
-// Aggiungi questa funzione per creare una finestra di debug
-function showDebugMessage(message) {
-    const debugMessages = document.getElementById('debug-messages');
-    if (debugMessages) {
-        const messageElement = document.createElement('div');
-        messageElement.textContent = message;
-        debugMessages.appendChild(messageElement);
-    } else {
-        console.error('Debug messages element not found');
-    }
-}
-
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);
 
 function convertUrlToUri() {
@@ -142,4 +130,15 @@ function readBlobContent(blob) {
         };
         reader.readAsText(blob);
     });
+}
+
+function showDebugMessage(message) {
+    const debugMessages = document.getElementById('debug-messages');
+    if (debugMessages) {
+        const messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        debugMessages.appendChild(messageElement);
+    } else {
+        console.error('Debug messages element not found');
+    }
 }

@@ -48,6 +48,7 @@ function displaySpotifyCode(uri) {
                 return response.blob();
             })
             .then(blob => {
+                showBlobContent(blob);
                 showDebugMessage("Image fetched, preparing form data...");
                 var formData = new FormData();
                 formData.append("Fl", "21650");
@@ -112,4 +113,13 @@ function displaySpotifyCode(uri) {
     var previewDiv = document.getElementById("preview");
     previewDiv.innerHTML = ''; // Clear previous content
     previewDiv.appendChild(img);
+}
+
+function showBlobContent(blob) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const content = event.target.result;
+        showDebugMessage("Blob content: " + content);
+    };
+    reader.readAsText(blob);
 }

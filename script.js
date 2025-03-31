@@ -1,12 +1,12 @@
 // Aggiungi questa funzione per creare una finestra di debug
 function showDebugMessage(message) {
-    const debugWindow = document.getElementById('debug-window');
-    if (debugWindow) {
+    const debugMessages = document.getElementById('debug-messages');
+    if (debugMessages) {
         const messageElement = document.createElement('div');
         messageElement.textContent = message;
-        debugWindow.appendChild(messageElement);
+        debugMessages.appendChild(messageElement);
     } else {
-        console.error('Debug window element not found');
+        console.error('Debug messages element not found');
     }
 }
 

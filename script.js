@@ -31,15 +31,16 @@ function displaySpotifyCode(uri) {
         fetch(spotifyCodeUrl)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Network response was not ok: ' + response.statusText);
                 }
+                console.log("Response received, converting to blob...");
                 return response.blob();
             })
             .then(blob => {
                 if (blob.size === 0) {
                     throw new Error('Blob is empty');
                 }
-                console.log("Image fetched, preparing form data...");
+                console.log("Blob fetched, preparing form data...");
                 
                 var formData = new FormData();
                 formData.append("Fl", "21650");
@@ -85,7 +86,7 @@ function displaySpotifyCode(uri) {
             .then(response => {
                 console.log("POST request sent, awaiting response...");
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Network response was not ok: ' + response.statusText);
                 }
                 return response.text();
             })
@@ -97,7 +98,7 @@ function displaySpotifyCode(uri) {
             .catch((error) => {
                 console.error('Error:', error);
                 var outputDiv = document.getElementById("outputUri");
-                outputDiv.innerText = 'Error: ' + error; // Print the error message to the outputDiv
+                outputDiv.innerText = 'Error: ' + error.message; // Print the error message to the outputDiv
             });
     });
 

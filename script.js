@@ -9,9 +9,14 @@ async function convertUrlToUri() {  // Cambiato a funzione asincrona
     } else {
         document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER VEDERE IL CONTENUTO RAW IN ASChII";
     }
-
-    var type = parts[3];
-    var id = parts[4].split('?')[0]; // Remove any query parameters
+    if(parts[3]=="initl-it"){
+        var type = parts[4];
+        var id = parts[5].split('?')[0]; // Remove any query parameters
+    }
+    else{
+        var type = parts[3];
+        var id = parts[4].split('?')[0]; // Remove any query parameters
+    }
     var uri = 'spotify:' + type + ':' + id;
     displaySpotifyCode(uri);
     showDebugMessage("Spotify URI generato: " + uri);

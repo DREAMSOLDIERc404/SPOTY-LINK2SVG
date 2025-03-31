@@ -38,12 +38,14 @@ async function displaySpotifyCode(uri) {  // Cambiato a funzione asincrona
             showBlobContent(blob);
             showDebugMessage("Image fetched, preparing form data...");
 
-            let content = await readBlobContent(blob);
-            showDebugMessage("Blob content: " + content);
+            // Converti il blob in un oggetto File
+            const file = new File([blob], "spcode.png", {
+                type: 'image/png'
+            });
 
             var formData = new FormData();
             formData.append("Fl", "21650");
-            formData.append("F", blob, "spcode.png"); // Attach the image blob
+            formData.append("F", file); // Attach the file object
             formData.append("C", "en");
             formData.append("A", "False");
             formData.append("V", "False");
@@ -76,11 +78,11 @@ async function displaySpotifyCode(uri) {  // Cambiato a funzione asincrona
 
             showDebugMessage("Form data prepared: " + JSON.stringify(Object.fromEntries(formData.entries())));
 
-            // Verifica che il blob sia presente nel FormData
+            // Verifica che il file sia presente nel FormData
             if (formData.has("F")) {
-                showDebugMessage("Blob aggiunto correttamente al FormData.");
+                showDebugMessage("File aggiunto correttamente al FormData.");
             } else {
-                showDebugMessage("Errore: Blob non aggiunto al FormData.");
+                showDebugMessage("Errore: File non aggiunto al FormData.");
             }
 
             showDebugMessage("Sending POST request...");

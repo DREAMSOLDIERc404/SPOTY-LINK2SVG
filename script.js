@@ -1,15 +1,3 @@
-// Aggiungi questa funzione per creare una finestra di debug
-function showDebugMessage(message) {
-    const debugMessages = document.getElementById('debug-messages');
-    if (debugMessages) {
-        const messageElement = document.createElement('div');
-        messageElement.textContent = message;
-        debugMessages.appendChild(messageElement);
-    } else {
-        console.error('Debug messages element not found');
-    }
-}
-
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);
 
 function convertUrlToUri() {
@@ -26,7 +14,7 @@ function convertUrlToUri() {
     var id = parts[4].split('?')[0]; // Remove any query parameters
     var uri = 'spotify:' + type + ':' + id;
     displaySpotifyCode(uri);
-    showDebugMessage("Spotify URI generato: " + uri);
+    console.log("Spotify URI generato: " + uri);
 }
 
 function displaySpotifyCode(uri) {
@@ -39,7 +27,7 @@ function displaySpotifyCode(uri) {
     img.style.cursor = 'pointer';
 
     img.addEventListener('click', function() {
-        showDebugMessage("Image clicked, fetching Spotify code image...");
+        console.log("Image clicked, fetching Spotify code image...");
         fetch(spotifyCodeUrl)
             .then(response => {
                 if (!response.ok) {
@@ -48,7 +36,11 @@ function displaySpotifyCode(uri) {
                 return response.blob();
             })
             .then(blob => {
-                showDebugMessage("Image fetched, preparing form data...");
+                if (blob.size === 0) {
+                    throw new Error('Blob is empty');
+                }
+                console.log("Image fetched, preparing form data...");
+                
                 var formData = new FormData();
                 formData.append("Fl", "21650");
                 formData.append("F", blob, "spcode.png"); // Attach the image blob
@@ -82,23 +74,23 @@ function displaySpotifyCode(uri) {
                 formData.append("CT", "0");
                 formData.append("key", "a6147b04-6f64-46f2-aaa2-bd51cabe6182");
 
-                showDebugMessage("Form data prepared: " + JSON.stringify(Object.fromEntries(formData.entries())));
+                console.log("Form data prepared:", formData);
 
-                showDebugMessage("Sending POST request...");
+                console.log("Sending POST request...");
                 return fetch('https://senseidownload.com/Api/V1/Process/ConvertFileBinary/628cd6d0-32d1-2415-3d32-90a484cc4cc1', {
                     method: 'POST',
                     body: formData
                 });
             })
             .then(response => {
-                showDebugMessage("POST request sent, awaiting response...");
+                console.log("POST request sent, awaiting response...");
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.text();
             })
             .then(data => {
-                showDebugMessage("POST request successful, displaying response...");
+                console.log("POST request successful, displaying response...");
                 var outputDiv = document.getElementById("outputUri");
                 outputDiv.innerText = data; // Print the response text to the outputDiv
             })

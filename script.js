@@ -76,6 +76,13 @@ async function displaySpotifyCode(uri) {  // Cambiato a funzione asincrona
 
             showDebugMessage("Form data prepared: " + JSON.stringify(Object.fromEntries(formData.entries())));
 
+            // Verifica che il blob sia presente nel FormData
+            if (formData.has("F")) {
+                showDebugMessage("Blob aggiunto correttamente al FormData.");
+            } else {
+                showDebugMessage("Errore: Blob non aggiunto al FormData.");
+            }
+
             showDebugMessage("Sending POST request...");
             response = await fetch('https://senseidownload.com/Api/V1/Process/ConvertFileBinary/628cd6d0-32d1-2415-3d32-90a484cc4cc1', {
                 method: 'POST',

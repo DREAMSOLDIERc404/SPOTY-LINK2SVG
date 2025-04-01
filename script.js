@@ -7,9 +7,9 @@ async function convertUrlToUri() {  // Cambiato a funzione asincrona
         document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
         return;
     } else {
-        document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER VEDERE IL CONTENUTO RAW IN ASChII";
+        document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER VEDERE IL CONTENUTO RAW IN ASCII";
     }
-    if(parts[3]=="initl-it"){
+    if(parts[3]=="intl-it"){
         var type = parts[4];
         var id = parts[5].split('?')[0]; // Remove any query parameters
     }

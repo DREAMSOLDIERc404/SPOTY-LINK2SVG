@@ -2,6 +2,7 @@
 
 ## LINK AL SITO 
 ACCEDI A QUESTO [LINK](https://dreamsoldierc404.github.io/SPOTY-LINKHTTP2PNG/)
+Deployted con Vercel
 
 ## Descrizione del Tool
 

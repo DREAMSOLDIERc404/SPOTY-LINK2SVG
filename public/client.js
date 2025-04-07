@@ -1,6 +1,6 @@
 
 function convertUrlToUri() {
-  console.log("Funzione convertUrlToUri chiamata");
+  console.log("Funzione convertUrlToUri chiamaa");
   var url = document.getElementById("spotifyLink").value;
   console.log("URL inserito:", url);
   var parts = url.split('/');

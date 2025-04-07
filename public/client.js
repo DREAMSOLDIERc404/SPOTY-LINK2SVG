@@ -25,6 +25,7 @@ function convertUrlToUri() {
 function displaySpotifyCode(uri) {
   console.log("Funzione displaySpotifyCode chiamata con URI:", uri);
   var spotifyCodeUrl = `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${encodeURIComponent(uri)}`;
+  var spotifyCodeUrlAPI=  `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${uri}`
   var img = document.createElement('img');
   img.src = spotifyCodeUrl;
   img.alt = 'Spotify Code';
@@ -33,7 +34,7 @@ function displaySpotifyCode(uri) {
   img.style.cursor = 'pointer';
   img.addEventListener('click', function() {
     console.log("Immagine cliccata per convertire in SVG");
-    fetch(`/convert?url=${encodeURIComponent(spotifyCodeUrl)}&filename=spotify_code.svg`)
+    fetch(`/convert?url=${encodeURIComponent(spotifyCodeUrlAPI)}&filename=spotify_code.svg`)
       .then(response => response.blob())
       .then(blob => {
         var a = document.createElement('a');

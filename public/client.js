@@ -1,7 +1,15 @@
+function cambiaTesto() {
+  console.log("Funzione cambiaTesto chiamata");
+  document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
+}
+
 function convertUrlToUri() {
+  console.log("Funzione convertUrlToUri chiamata");
   var url = document.getElementById("spotifyLink").value;
+  console.log("URL inserito:", url);
   var parts = url.split('/');
   if (parts.length < 5 || parts[2] !== "open.spotify.com") {
+    console.log("URL non valido");
     document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
     return;
   } else {
@@ -10,11 +18,12 @@ function convertUrlToUri() {
   var type = parts[3];
   var id = parts[4].split('?')[0];
   var uri = 'spotify:' + type + ':' + id;
+  console.log("Spotify URI generato:", uri);
   displaySpotifyCode(uri);
-  console.log("Spotify URI generato: " + uri);
 }
 
 function displaySpotifyCode(uri) {
+  console.log("Funzione displaySpotifyCode chiamata con URI:", uri);
   var spotifyCodeUrl = `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${encodeURIComponent(uri)}`;
   var img = document.createElement('img');
   img.src = spotifyCodeUrl;
@@ -23,6 +32,7 @@ function displaySpotifyCode(uri) {
   img.style.height = 'auto';
   img.style.cursor = 'pointer';
   img.addEventListener('click', function() {
+    console.log("Immagine cliccata per convertire in SVG");
     convertImageToSVG(spotifyCodeUrl, 'spotify_code.svg');
   });
   var outputDiv = document.getElementById("outputUri");
@@ -34,6 +44,7 @@ function displaySpotifyCode(uri) {
 }
 
 async function convertImageToSVG(url, filename) {
+  console.log("Funzione convertImageToSVG chiamata con URL:", url);
   try {
     const response = await fetch(url);
     const buffer = await response.buffer();
@@ -51,7 +62,7 @@ async function convertImageToSVG(url, filename) {
       fs.unlinkSync(tempFile);
     });
   } catch (err) {
-    console.error(err);
+    console.error("Errore durante la conversione dell'immagine in SVG:", err);
   }
 }
 

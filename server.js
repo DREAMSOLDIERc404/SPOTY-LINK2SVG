@@ -6,7 +6,7 @@ const fetch = require('node-fetch');
 const app = express();
 
 async function convertImageToSVG(url, filename) {
-  warn.log("Funzione convertImageToSVG chiamata con URL:", url);
+  console.warn("Funzione convertImageToSVG chiamata con URL:", url);
   try {
     const response = await fetch(url);
     const buffer = await response.buffer();

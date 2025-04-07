@@ -1,13 +1,9 @@
 const potrace = require('potrace');
 const fs = require('fs');
 const fetch = require('node-fetch');
-const express = require('express');
-const app = express();
-
-app.use(express.json());
 
 async function convertImageToSVG(url, filename) {
-  console.info("Funzione convertImageToSVG chiamata con URL:", url);
+  console.log("Funzione convertImageToSVG chiamata con URL:", url);
   try {
     const response = await fetch(url);
     const buffer = await response.buffer();
@@ -31,20 +27,5 @@ async function convertImageToSVG(url, filename) {
     console.error("Errore durante la richiesta di fetch:", err);
   }
 }
-
-app.post('/api/convert', async (req, res) => {
-  const { url, filename } = req.body;
-  try {
-    await convertImageToSVG(url, filename);
-    res.status(200).send('Conversione completata');
-  } catch (err) {
-    res.status(500).send('Errore durante la conversione');
-  }
-});
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.info(`Server in ascolto sulla porta ${port}`);
-});
 
 module.exports = { convertImageToSVG };

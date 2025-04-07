@@ -1,10 +1,10 @@
-async function convertUrlToUri() {
-  console.warn("Funzione convertUrlToUri chiamata");
+function convertUrlToUri() {
+  console.log("Funzione convertUrlToUri chiamata");
   var url = document.getElementById("spotifyLink").value;
-  console.warn("URL inserito:", url);
+  console.log("URL inserito:", url);
   var parts = url.split('/');
   if (parts.length < 5 || parts[2] !== "open.spotify.com") {
-    console.warn("URL non valido");
+    console.log("URL non valido");
     document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
     return;
   } else {
@@ -18,12 +18,12 @@ async function convertUrlToUri() {
     var id = parts[4].split('?')[0];
   }
   var uri = 'spotify:' + type + ':' + id;
-  console.warn("Spotify URI generato:", uri);
+  console.log("Spotify URI generato:", uri);
   displaySpotifyCode(uri);
 }
 
 function displaySpotifyCode(uri) {
-  console.warn("Funzione displaySpotifyCode chiamata con URI:", uri);
+  console.log("Funzione displaySpotifyCode chiamata con URI:", uri);
   var spotifyCodeUrl = `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${encodeURIComponent(uri)}`;
   var img = document.createElement('img');
   img.src = spotifyCodeUrl;
@@ -32,8 +32,8 @@ function displaySpotifyCode(uri) {
   img.style.height = 'auto';
   img.style.cursor = 'pointer';
   img.addEventListener('click', function() {
-    console.warn("Immagine cliccata per convertire in SVG");
-    callServerToConvertImage(spotifyCodeUrl, 'spotify_code.svg');
+    console.log("Immagine cliccata per convertire in SVG");
+    convertImageToSVG(spotifyCodeUrl, 'spotify_code.svg');
   });
   var outputDiv = document.getElementById("outputUri");
   outputDiv.innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
@@ -43,24 +43,61 @@ function displaySpotifyCode(uri) {
   previewDiv.appendChild(img);
 }
 
-async function callServerToConvertImage(url, filename) {
-  console.warn("Chiamata al server per convertire l'immagine con URL:", url);
+async function convertImageToSVG(url, filename) {
+  console.log("Funzione convertImageToSVG chiamata con URL:", url);
   try {
-    const response = await fetch('/api/convert', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ url, filename })
+    const response = await fetch(url);
+    const buffer = await response.buffer();
+    const tempFile = 'temp.png';
+    fs.writeFileSync(tempFile, buffer);
+    potrace.trace(tempFile, { turdSize: 100, alphaMax: 0.4 }, function (err, svg) {
+      if (err) throw err;
+      var blob = new Blob([svg], { type: 'image/svg+xml' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      fs.unlinkSync(tempFile);
     });
-    if (response.ok) {
-      console.warn("Conversione completata con successo");
-    } else {
-      console.error("Errore durante la conversione");
-    }
   } catch (err) {
-    console.error("Errore durante la chiamata al server:", err);
+    console.error("Errore durante la conversione dell'immagine in SVG:", err);
   }
 }
 
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);
+//Modifica del file server.js
+//Aggiungiamo dei messaggi di debug alla console nel file server.js:
+
+const potrace = require('potrace');
+const fs = require('fs');
+const fetch = require('node-fetch');
+
+async function convertImageToSVG(url, filename) {
+  console.log("Funzione convertImageToSVG chiamata con URL:", url);
+  try {
+    const response = await fetch(url);
+    const buffer = await response.buffer();
+    const tempFile = 'temp.png';
+    fs.writeFileSync(tempFile, buffer);
+    potrace.trace(tempFile, { turdSize: 100, alphaMax: 0.4 }, function (err, svg) {
+      if (err) {
+        console.error("Errore durante la conversione dell'immagine in SVG:", err);
+        throw err;
+      }
+      var blob = new Blob([svg], { type: 'image/svg+xml' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      fs.unlinkSync(tempFile);
+    });
+  } catch (err) {
+    console.error("Errore durante la richiesta di fetch:", err);
+  }
+}
+
+module.exports = { convertImageToSVG };

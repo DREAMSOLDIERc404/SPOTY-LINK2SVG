@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Convert Spotify URLs to Spotify Codes and SVGs",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },

@@ -33,7 +33,7 @@ function displaySpotifyCode(uri) {
   img.style.cursor = 'pointer';
   img.addEventListener('click', function() {
     console.log("Immagine cliccata per convertire in SVG");
-    fetch(`api/convert?url=${encodeURIComponent(spotifyCodeUrl)}&filename=spotify_code.svg`)
+    fetch(`/api/convert?url=${encodeURIComponent(spotifyCodeUrl)}&filename=spotify_code.svg`)
       .then(response => response.blob())
       .then(blob => {
         var a = document.createElement('a');

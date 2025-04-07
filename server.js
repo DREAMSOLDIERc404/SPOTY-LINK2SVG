@@ -1,7 +1,7 @@
-const express = require('express');
-const potrace = require('potrace');
-const fetch = require('node-fetch');
-const { promisify } = require('util');
+import express from 'express';
+import potrace from 'potrace';
+import fetch from 'node-fetch';
+import { promisify } from 'util';
 
 // "Promisificare" potrace.trace
 const trace = promisify(potrace.trace);
@@ -40,4 +40,5 @@ app.listen(3000, () => {
   console.log('Server in ascolto sulla porta 3000');
 });
 
-module.exports = { convertImageToSVG };
+// Esportazione per eventuali test o utilizzi modulari
+export { convertImageToSVG };

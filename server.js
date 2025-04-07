@@ -33,15 +33,11 @@ function separateCompoundPath(svgString) {
 
   // Per ciascun subpath, creiamo un nuovo <path>
   const newPaths = subpaths
-    .map(pathData => `<path d="${pathData.trim()}" stroke="none" fill="#000000"/>`)
+    .map(pathData => `<path d="${pathData.trim()}z"/>`)
     .join("\n");
 
   // Costruiamo l'header e la struttura finale in modo simile al file di esempio
-  const svgHeader = `<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="1000.000000pt" height="250.000000pt" viewBox="0 0 1000.000000 250.000000"
- preserveAspectRatio="xMidYMid meet">`;
+  const svgHeader = `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="250" viewBox="0 0 1000 250" version="1.1">`;
 
   const groupOpen = `<g transform="translate(0.000000,250.000000) scale(0.100000,-0.100000)"
 fill="#000000" stroke="none">`;

@@ -16,7 +16,7 @@ async function convertImageToSVG(url) {
     const buffer = await response.buffer();
 
     // Converti direttamente il buffer in SVG
-    const svg = await trace(buffer, { turdSize: 100, alphaMax: 0.4 });
+    const svg = await trace(buffer, { turdSize: 100, alphaMax: 1 });
     return svg;
   } catch (err) {
     console.error("Errore durante la conversione dell'immagine in SVG:", err);

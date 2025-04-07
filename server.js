@@ -1,74 +1,51 @@
 import express from 'express';
-import potrace from 'potrace';
 import fetch from 'node-fetch';
+import potrace from 'potrace';
 import { promisify } from 'util';
 
-// Promisifica potrace.trace
+// Promisifichiamo la funzione trace di Potrace per usarla con async/await
 const trace = promisify(potrace.trace);
+
+/**
+ * In pratica, Potrace:
+ * 1. Converte l’immagine in un percorso (o in un compound path con sottopercorsi)
+ *    basandosi su parametri come `turdSize`, `alphaMax` e `turnPolicy`.
+ * 2. Organizza i sottopercorsi all’interno di un singolo elemento <path>,
+ *    lasciando al metodo di riempimento (ad es. fill-rule="evenodd") l’interpretazione
+ *    di quali parti vanno riempite (e quali, per esempio, creino un buco).
+ *
+ * Quindi, se ad esempio il compound path contiene sia l’area esterna che
+ * una o più aree interne (che si intersecano secondo regole geometriche), l’uso
+ * di fill-rule="evenodd" potrà determinare che le zone interne (contate due volte)
+ * non vengano riempite.
+ */
 
 const app = express();
 
-/**
- * Funzione che prende l'SVG generato da Potrace e, se il tag <path>
- * contiene più subpath (cioè più comandi "M"), li separa in singoli
- * elementi <path> e poi costruisce un output SVG con la struttura
- * desiderata.
- */
-function separateCompoundPath(svgString) {
-  // Cerchiamo di estrarre l'attributo "d" del primo <path>
-  const pathRegex = /<path[^>]+d="([^"]+)"/;
-  const match = svgString.match(pathRegex);
-  if (!match) {
-    // Se non si trova un <path>, restituiamo lo SVG originale
-    return svgString;
-  }
-  const dAttribute = match[1].trim();
-
-  // Splitta il contenuto in subpath: ogni oggetto dovrebbe iniziare con "M"
-  const subpaths = dAttribute.match(/M[^M]+/g);
-  if (!subpaths || subpaths.length <= 1) {
-    // Se troviamo solo un subpath, non è necessaria la separazione
-    return svgString;
-  }
-
-  // Per ciascun subpath, creiamo un nuovo <path>
-  const newPaths = subpaths
-    .map(pathData => `<path d="${pathData.trim()}z"/>`)
-    .join("\n");
-
-  // Costruiamo l'header e la struttura finale in modo simile al file di esempio
-  const svgHeader = `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="250" viewBox="0 0 1000 250" version="1.1">`;
-
-  const groupOpen = `<g transform="translate(0.000000,250.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">`;
-  const svgClose = `</g>
-</svg>`;
-
-  // Uniamo tutto in un'unica stringa
-  const newSvg = `${svgHeader}
-${groupOpen}
-${newPaths}
-${svgClose}
-`;
-  return newSvg;
-}
-
-/**
- * Converte l'immagine (buffer) in SVG utilizzando Potrace e poi
- * esegue la post-elaborazione per separare i vari oggetti.
- */
-async function convertImageToSVG(url) {
-  console.warn("Funzione convertImageToSVG chiamata con URL:", url);
+async function convertImageToSVG(imageUrl) {
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Errore durante il fetch dell'immagine");
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error(`Errore durante il fetch: ${response.statusText}`);
+    }
     const buffer = await response.buffer();
 
-    // Converti direttamente il buffer in SVG con Potrace
-    let svg = await trace(buffer, { turdSize: 100, alphaMax: 1 });
-    
-    // Applichiamo la post-elaborazione per separare i vari subpath
-    svg = separateCompoundPath(svg);
+    // Converte direttamente il buffer in SVG.
+    // I parametri usati sono:
+    //   - turdSize: ignora elementi piccoli/rumorosi
+    //   - alphaMax: aumenta la tolleranza per semplificare le curve, rendendo le forme più morbide
+    //   - turnPolicy: ad esempio 'minority' (puoi modificarlo in base alle tue esigenze)
+    const svg = await trace(buffer, {
+      turdSize: 100,
+      alphaMax: 1,
+      turnPolicy: 'minority'
+    });
+
+    // L'SVG restituito da Potrace è un compound path in cui tutti i sottopercorsi
+    // sono raggruppati in un unico elemento <path>.
+    // Se nell'SVG è presente l'attributo fill-rule="evenodd" (o se lo inserisci tu in fase di editing),
+    // la regola determina quali parti riempire (ad esempio, creando degli “buchi” nei casi in cui
+    // percorsi intersecanti generino contorni annidati).
     
     return svg;
   } catch (err) {
@@ -78,17 +55,17 @@ async function convertImageToSVG(url) {
 }
 
 app.get('/api/convert', async (req, res) => {
-  const url = decodeURIComponent(req.query.url);
   try {
-    const svg = await convertImageToSVG(url);
+    const imageUrl = decodeURIComponent(req.query.url);
+    const svgOutput = await convertImageToSVG(imageUrl);
     res.setHeader('Content-Type', 'image/svg+xml');
-    res.send(svg);
+    res.send(svgOutput);
   } catch (err) {
-    res.status(500).send("Errore durante la conversione dell'immagine in SVG");
+    res.status(500).send("Errore nel convertire l'immagine in SVG.");
   }
 });
 
-// Avvia il server in ambiente di sviluppo; in produzione Vercel gestisce il routing
+// Avvio il server in ambiente di sviluppo. In produzione Vercel imposta il routing tramite il default export.
 if (process.env.NODE_ENV !== 'production') {
   app.listen(3000, () => {
     console.log('Server in ascolto sulla porta 3000');

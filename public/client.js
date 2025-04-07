@@ -1,10 +1,10 @@
 async function convertUrlToUri() {
-  console.log("Funzione convertUrlToUri chiamata");
+  console.info("Funzione convertUrlToUri chiamata");
   var url = document.getElementById("spotifyLink").value;
-  console.log("URL inserito:", url);
+  console.info("URL inserito:", url);
   var parts = url.split('/');
   if (parts.length < 5 || parts[2] !== "open.spotify.com") {
-    console.log("URL non valido");
+    console.info("URL non valido");
     document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
     return;
   } else {
@@ -18,12 +18,12 @@ async function convertUrlToUri() {
     var id = parts[4].split('?')[0];
   }
   var uri = 'spotify:' + type + ':' + id;
-  console.log("Spotify URI generato:", uri);
+  console.info("Spotify URI generato:", uri);
   displaySpotifyCode(uri);
 }
 
 function displaySpotifyCode(uri) {
-  console.log("Funzione displaySpotifyCode chiamata con URI:", uri);
+  console.info("Funzione displaySpotifyCode chiamata con URI:", uri);
   var spotifyCodeUrl = `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${encodeURIComponent(uri)}`;
   var img = document.createElement('img');
   img.src = spotifyCodeUrl;
@@ -32,7 +32,7 @@ function displaySpotifyCode(uri) {
   img.style.height = 'auto';
   img.style.cursor = 'pointer';
   img.addEventListener('click', function() {
-    console.log("Immagine cliccata per convertire in SVG");
+    console.info("Immagine cliccata per convertire in SVG");
     callServerToConvertImage(spotifyCodeUrl, 'spotify_code.svg');
   });
   var outputDiv = document.getElementById("outputUri");
@@ -44,7 +44,7 @@ function displaySpotifyCode(uri) {
 }
 
 async function callServerToConvertImage(url, filename) {
-  console.log("Chiamata al server per convertire l'immagine con URL:", url);
+  console.info("Chiamata al server per convertire l'immagine con URL:", url);
   try {
     const response = await fetch('/api/convert', {
       method: 'POST',
@@ -54,7 +54,7 @@ async function callServerToConvertImage(url, filename) {
       body: JSON.stringify({ url, filename })
     });
     if (response.ok) {
-      console.log("Conversione completata con successo");
+      console.info("Conversione completata con successo");
     } else {
       console.error("Errore durante la conversione");
     }

@@ -1,7 +1,3 @@
-function cambiaTesto() {
-  console.log("Funzione cambiaTesto chiamata");
-  document.getElementById("demo").innerHTML = "Hai cliccato il bottone!";
-}
 
 function convertUrlToUri() {
   console.log("Funzione convertUrlToUri chiamata");
@@ -15,8 +11,13 @@ function convertUrlToUri() {
   } else {
     document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
   }
-  var type = parts[3];
-  var id = parts[4].split('?')[0];
+  if(parts[3]== "intl-it"){
+    var type = parts[4];
+    var id = parts[5].split('?')[0];
+  }else{
+    var type = parts[3];
+    var id = parts[4].split('?')[0];  
+  }
   var uri = 'spotify:' + type + ':' + id;
   console.log("Spotify URI generato:", uri);
   displaySpotifyCode(uri);

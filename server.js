@@ -9,54 +9,58 @@ const trace = promisify(potrace.trace);
 const app = express();
 
 /**
- * Funzione che riceve il contenuto SVG generato da Potrace e, se vi
- * è un unico elemento <path> contenente subpath (cioè più comandi "M"),
- * li separa in più <path> distinti.
+ * Funzione che prende l'SVG generato da Potrace e, se il tag <path>
+ * contiene più subpath (cioè più comandi "M"), li separa in singoli
+ * elementi <path> e poi costruisce un output SVG con la struttura
+ * desiderata.
  */
 function separateCompoundPath(svgString) {
-  // Esempio: l'SVG generato è simile a:
-  // <svg xmlns="http://www.w3.org/2000/svg" ...>
-  //   <path d="M113.500 50.644 ... M656.223 112.557 ... M749 113 ..." stroke="none" fill="black" fill-rule="evenodd"/>
-  // </svg>
-  //
-  // Estraiamo il contenuto dell'attributo d.
-  const pathRegex = /<path([^>]+)d="([^"]+)"([^>]*)\/?>/;
+  // Cerchiamo di estrarre l'attributo "d" del primo <path>
+  const pathRegex = /<path[^>]+d="([^"]+)"/;
   const match = svgString.match(pathRegex);
   if (!match) {
-    // Se non troviamo un <path>, restituiamo lo SVG originale
+    // Se non si trova un <path>, restituiamo lo SVG originale
     return svgString;
   }
-  const dAttribute = match[2].trim();
+  const dAttribute = match[1].trim();
 
-  // Splitta il contenuto in subpath: ogni nuovo oggetto dovrebbe iniziare con un "M"
-  // Usando la regex /M[^M]+/g troviamo tutte le occorrenze che partono con "M" seguite da tutto (fino al prossimo "M")
+  // Splitta il contenuto in subpath: ogni oggetto dovrebbe iniziare con "M"
   const subpaths = dAttribute.match(/M[^M]+/g);
-  
-  // Se non viene trovato più di un subpath, non serve alcuna separazione
   if (!subpaths || subpaths.length <= 1) {
-    return svgString; 
+    // Se troviamo solo un subpath, non è necessaria la separazione
+    return svgString;
   }
-  
-  // Per ciascuno subpath, creiamo un nuovo elemento <path> con gli attributi base (qui stampiamo fill e stroke fissi)
+
+  // Per ciascun subpath, creiamo un nuovo <path>
   const newPaths = subpaths
-    .map(pathD => `<path d="${pathD.trim()}" stroke="none" fill="black"/>`)
-    .join('\n');
+    .map(pathData => `<path d="${pathData.trim()}" stroke="none" fill="#000000"/>`)
+    .join("\n");
 
-  // Ora, ricostruiamo l'SVG mantenendo eventuali attributi del tag <svg> originale
-  const svgOpenTagMatch = svgString.match(/<svg([^>]*)>/);
-  const svgOpenTag = svgOpenTagMatch ? `<svg${svgOpenTagMatch[1]}>` : `<svg>`;
-  const svgCloseTag = '</svg>';
+  // Costruiamo l'header e la struttura finale in modo simile al file di esempio
+  const svgHeader = `<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="1000.000000pt" height="250.000000pt" viewBox="0 0 1000.000000 250.000000"
+ preserveAspectRatio="xMidYMid meet">`;
 
-  // Incapsuliamo tutti i nuovi <path> in un gruppo <g>
-  const newSvg = `${svgOpenTag}
-  <g>
-    ${newPaths}
-  </g>
-${svgCloseTag}`;
-  
+  const groupOpen = `<g transform="translate(0.000000,250.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">`;
+  const svgClose = `</g>
+</svg>`;
+
+  // Uniamo tutto in un'unica stringa
+  const newSvg = `${svgHeader}
+${groupOpen}
+${newPaths}
+${svgClose}
+`;
   return newSvg;
 }
 
+/**
+ * Converte l'immagine (buffer) in SVG utilizzando Potrace e poi
+ * esegue la post-elaborazione per separare i vari oggetti.
+ */
 async function convertImageToSVG(url) {
   console.warn("Funzione convertImageToSVG chiamata con URL:", url);
   try {
@@ -64,10 +68,10 @@ async function convertImageToSVG(url) {
     if (!response.ok) throw new Error("Errore durante il fetch dell'immagine");
     const buffer = await response.buffer();
 
-    // Converti direttamente il buffer in SVG
+    // Converti direttamente il buffer in SVG con Potrace
     let svg = await trace(buffer, { turdSize: 100, alphaMax: 1 });
     
-    // Applichiamo la post-elaborazione per separare i vari oggetti in base al comando "M"
+    // Applichiamo la post-elaborazione per separare i vari subpath
     svg = separateCompoundPath(svg);
     
     return svg;
@@ -88,12 +92,11 @@ app.get('/api/convert', async (req, res) => {
   }
 });
 
-// Avvia il server in ambiente di sviluppo; in produzione Vercel gestirà il routing
+// Avvia il server in ambiente di sviluppo; in produzione Vercel gestisce il routing
 if (process.env.NODE_ENV !== 'production') {
   app.listen(3000, () => {
     console.log('Server in ascolto sulla porta 3000');
   });
 }
 
-// Esportiamo l'app come default export per l'ambiente serverless di Vercel
 export default app;

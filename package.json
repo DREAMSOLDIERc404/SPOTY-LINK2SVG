@@ -2,14 +2,14 @@
   "name": "SPOTY-LINKHTTP2SVG",
   "version": "1.0.0",
   "description": "Convert Spotify URLs to Spotify Codes and SVGs",
-  "main": "script.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node script.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "potrace": "^2.0.0",
     "fs": "^0.0.1-security",
     "node-fetch": "^2.6.1",
-    "express": "^5.1.0"
+    "express": "^4.17.1"
   }
 }

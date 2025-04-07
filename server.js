@@ -24,7 +24,7 @@ async function convertImageToSVG(url) {
   }
 }
 
-app.get('convert', async (req, res) => {
+app.get('/api/convert', async (req, res) => {
   const url = decodeURIComponent(req.query.url);
   try {
     const svg = await convertImageToSVG(url);

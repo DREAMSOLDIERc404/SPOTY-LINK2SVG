@@ -25,7 +25,7 @@ function convertUrlToUri() {
 function displaySpotifyCode(uri) {
   console.log("Funzione displaySpotifyCode chiamata con URI:", uri);
   var spotifyCodeUrl = `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${encodeURIComponent(uri)}`;
-  var spotifyCodeUrlAPI=  `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${uri}`
+  var spotifyCodeUrlAPI=  `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${uri}`;
   var img = document.createElement('img');
   img.src = spotifyCodeUrl;
   img.alt = 'Spotify Code';

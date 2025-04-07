@@ -9,10 +9,6 @@ async function convertImageToSVG(url, filename) {
   console.log("Funzione convertImageToSVG chiamata con URL:", url);
   try {
     const response = await fetch(url);
-    if (!response.ok) {
-      console.error("Errore durante il fetch dell'immagine:", response.statusText);
-      throw new Error(`Errore durante il fetch dell'immagine: ${response.statusText}`);
-    }
     const buffer = await response.buffer();
     const tempFile = 'temp.png';
     fs.writeFileSync(tempFile, buffer);
@@ -33,7 +29,6 @@ async function convertImageToSVG(url, filename) {
 app.get('/convert', async (req, res) => {
   const url = decodeURIComponent(req.query.url);
   const filename = req.query.filename;
-  console.log("URL decodificato:", url); // Log dell'URL decodificato
   try {
     const svg = await convertImageToSVG(url, filename);
     res.setHeader('Content-Type', 'image/svg+xml');

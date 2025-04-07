@@ -1,12 +1,12 @@
 # SPOTY:LINK2SVG
 
 ## LINK AL SITO 
-ACCEDI A QUESTO [LINK](https://dreamsoldierc404.github.io/SPOTY-LINKHTTP2PNG/)
+ACCEDI A QUESTO [LINK](https://spoty-linkhttp2svg.vercel.app/)
 Deployted con Vercel
 
 ## Descrizione del Tool
 
-Questo tool trasforma un URL spotify normalissima in un Spotify-code .PNG che può essere caricato nei portachiavi dell'editor MakerWorld. Questo ti permette di creare portachiavi personalizzati con il link di Spotify incorporato.
+Questo tool trasforma un URL spotify normalissima in un Spotify-code .SVG che può essere caricato nel editor BAMBULAB sui portachiavi. Questo ti permette di creare portachiavi personalizzati con il link di Spotify incorporato.
 
 ## Cos'è un URI di Spotify?
 

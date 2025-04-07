@@ -13,7 +13,7 @@ async function convertImageToSVG(url) {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Errore durante il fetch dell'immagine");
-    const buffer = await response.buffer();
+    const buffer = await response.arrayBuffer();
 
     // Converti direttamente il buffer in SVG
     const svg = await trace(buffer, { turdSize: 100, alphaMax: 1 });

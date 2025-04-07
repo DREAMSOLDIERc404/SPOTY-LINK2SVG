@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 async function convertImageToSVG(url, filename) {
-  console.log("Funzione convertImageToSVG chiamata con URL:", url);
+  console.info("Funzione convertImageToSVG chiamata con URL:", url);
   try {
     const response = await fetch(url);
     const buffer = await response.buffer();
@@ -44,7 +44,7 @@ app.post('/api/convert', async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server in ascolto sulla porta ${port}`);
+  console.info(`Server in ascolto sulla porta ${port}`);
 });
 
 module.exports = { convertImageToSVG };

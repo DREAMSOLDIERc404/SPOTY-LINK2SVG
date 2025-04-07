@@ -39,18 +39,17 @@ app.get('/convert', async (req, res) => {
     const svg = await convertImageToSVG(url, filename);
     res.setHeader('Content-Type', 'image/svg+xml');
     res.send(svg);
+
+    // Invio del file di log al client
+    res.download(logFile, 'server.log', (err) => {
+      if (err) {
+        console.error("Errore durante il download del file di log:", err);
+        res.status(500).send('Errore durante il download del file di log');
+      }
+    });
   } catch (err) {
     res.status(500).send('Errore durante la conversione dell\'immagine in SVG');
   }
-});
-
-app.get('/download-log', (req, res) => {
-  res.download(logFile, 'server.log', (err) => {
-    if (err) {
-      console.error("Errore durante il download del file di log:", err);
-      res.status(500).send('Errore durante il download del file di log');
-    }
-  });
 });
 
 app.listen(3000, () => {

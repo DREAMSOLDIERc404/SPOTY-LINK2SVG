@@ -2,7 +2,7 @@
 
 ## LINK AL SITO 
 ACCEDI A QUESTO [LINK](https://spoty-linkhttp2svg.vercel.app/)
-Deployted con Vercel
+(Deployted con Vercel)
 
 ## Descrizione del Tool
 

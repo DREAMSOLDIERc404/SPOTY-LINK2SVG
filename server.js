@@ -45,7 +45,7 @@ function separateCompoundPath(svgString) {
 
   // Ricomponi l'SVG con un unico elemento <path> che usa il d attribute merge
   const svgHeader = `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="250" viewBox="0 0 1000 250" version="1.1">`;
-  const newPath = `<path d="${mergedD}" fill="#000000" stroke="none"/>`;
+  const newPath = `<path d="${mergedD}" fill="#000000" fill-rule="evenodd" stroke="none"/>`;
   const svgClose = `</svg>`;
 
   return `${svgHeader}\n${newPath}\n${svgClose}`;

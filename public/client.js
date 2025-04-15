@@ -2,6 +2,11 @@
 
 async function convertUrlToUri() {
   console.log("Funzione convertUrlToUri chiamata");
+  
+  // Ogni volta che premiamo il tasto, rimuoviamo qualsiasi preview o messaggio precedente.
+  document.getElementById("preview").innerHTML = "";
+  document.getElementById("outputUri").innerHTML = "";
+
   const url = document.getElementById("spotifyLink").value;
   console.log("URL inserito:", url);
   const parts = url.split('/');
@@ -13,7 +18,7 @@ async function convertUrlToUri() {
     return;
   }
 
-  // Imposta un messaggio predefinito
+  // Messaggio predefinito prima del risultato
   document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
 
   // Estrazione dell'ID e del tipo (gestendo il caso "intl-it")
@@ -48,7 +53,7 @@ async function convertUrlToUri() {
     return;
   }
 
-  // Visualizza lo Spotify Code e abilita il click per il download dell'SVG
+  // Visualizza lo Spotify Code e abilita il download dell'SVG al click
   displaySpotifyCode(uri, `${trackName}.svg`);
 }
 
@@ -64,7 +69,7 @@ function displaySpotifyCode(uri, downloadFilename) {
   img.style.height = 'auto';
   img.style.cursor = 'pointer';
 
-  // Se l'immagine non viene caricata, mostra l'errore
+  // Se l'immagine non viene caricata, segnala l'errore
   img.onerror = () => {
     console.error("Immagine non trovata.");
     setErrorMessage("Invalid Spotify URL");
@@ -90,10 +95,10 @@ function displaySpotifyCode(uri, downloadFilename) {
       });
   });
 
-  // Visualizza il messaggio e la preview dell'immagine
+  // Visualizza la preview dell'immagine e il messaggio di download
   document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
   const previewDiv = document.getElementById("preview");
-  previewDiv.innerHTML = '';
+  previewDiv.innerHTML = ''; // giustifica ulteriormente la rimozione del contenuto precedente
   previewDiv.appendChild(img);
 }
 

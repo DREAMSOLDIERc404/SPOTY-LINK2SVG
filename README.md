@@ -1,6 +1,6 @@
 # SPOTY:LINK2SVG
 
-## LINK AL SITO 
+## Link al sito
 ACCEDI A QUESTO [LINK](https://spoty-linkhttp2svg.vercel.app/). 
 
 ## Descrizione del Tool

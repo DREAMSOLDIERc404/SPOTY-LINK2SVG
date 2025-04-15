@@ -6,15 +6,17 @@ async function convertUrlToUri() {
   console.log("URL inserito:", url);
   const parts = url.split('/');
 
+  // Controllo di formato base dell'URL Spotify
   if (parts.length < 5 || parts[2] !== "open.spotify.com") {
     console.log("URL non valido");
-    document.getElementById("outputUri").innerHTML = 'Invalid Spotify URL.';
+    setErrorMessage("Invalid Spotify URL");
     return;
   }
 
+  // Imposta un messaggio predefinito
   document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
 
-  // Estrazione dell'ID e del tipo (gestisce anche il caso "intl-it")
+  // Estrazione dell'ID e del tipo (gestendo il caso "intl-it")
   let type, id;
   if (parts[3] === "intl-it") {
     type = parts[4];
@@ -27,7 +29,7 @@ async function convertUrlToUri() {
   const uri = 'spotify:' + type + ':' + id;
   console.log("Spotify URI generato:", uri);
 
-  // Richiede i dettagli della traccia tramite il nostro endpoint /api/track
+  // Recupera i dettagli della traccia tramite il nostro endpoint /api/track
   let trackName = 'spotify_code';
   try {
     const response = await fetch(`/api/track?trackId=${id}`);
@@ -37,11 +39,16 @@ async function convertUrlToUri() {
       trackName = track.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     } else {
       console.error("Errore nel recupero della traccia:", response.status);
+      setErrorMessage("Invalid Spotify URL");
+      return;
     }
   } catch (err) {
     console.error("Errore nella chiamata a /api/track:", err);
+    setErrorMessage("Invalid Spotify URL");
+    return;
   }
 
+  // Visualizza lo Spotify Code e abilita il click per il download dell'SVG
   displaySpotifyCode(uri, `${trackName}.svg`);
 }
 
@@ -57,6 +64,12 @@ function displaySpotifyCode(uri, downloadFilename) {
   img.style.height = 'auto';
   img.style.cursor = 'pointer';
 
+  // Se l'immagine non viene caricata, mostra l'errore
+  img.onerror = () => {
+    console.error("Immagine non trovata.");
+    setErrorMessage("Invalid Spotify URL");
+  };
+
   img.addEventListener('click', () => {
     console.log("Immagine cliccata per convertire in SVG");
     fetch(
@@ -71,13 +84,23 @@ function displaySpotifyCode(uri, downloadFilename) {
         a.click();
         document.body.removeChild(a);
       })
-      .catch(err => console.error("Errore durante la conversione dell'immagine in SVG:", err));
+      .catch(err => {
+        console.error("Errore durante la conversione dell'immagine in SVG:", err);
+        setErrorMessage("Invalid Spotify URL");
+      });
   });
 
+  // Visualizza il messaggio e la preview dell'immagine
   document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
   const previewDiv = document.getElementById("preview");
   previewDiv.innerHTML = '';
   previewDiv.appendChild(img);
+}
+
+// Funzione di utilità per mostrare un messaggio di errore in rosso
+function setErrorMessage(message) {
+  const outputDiv = document.getElementById("outputUri");
+  outputDiv.innerHTML = `<span style="color: red;">${message}</span>`;
 }
 
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);

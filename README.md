@@ -2,7 +2,7 @@
 
 ## LINK AL SITO 
 ACCEDI A QUESTO [LINK](https://spoty-linkhttp2svg.vercel.app/)
-(Deployted con [Vercel](https://vercel.com/dreamsoldierc404s-projects/spoty-linkhttp2svg))
+(Deployted con [Vercel](https://vercel.com/dreamsoldierc404s-projects/spoty-linkhttp2svg)).\
 Inoltre per generare il nome del file viene usata l'api spotify [LINK](https://developer.spotify.com/dashboard/dfa218e2b3464f14b66ef04022172359)
 
 ## Descrizione del Tool

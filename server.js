@@ -9,29 +9,26 @@ const trace = promisify(potrace.trace);
 const app = express();
 
 /**
- * Endpoint per gestire il callback di Spotify.
- * Riceve il parametro "code" e lo scambia per un access token, utilizzando le variabili d'ambiente.
+ * Endpoint per recuperare i dettagli di una traccia.
+ * Usa client credentials flow per ottenere un access token e poi chiama l’API Spotify.
  */
-app.get('/callback', async (req, res) => {
-  const code = req.query.code;
-  if (!code) {
-    return res.status(400).send("Missing code parameter.");
+app.get('/api/track', async (req, res) => {
+  const trackId = req.query.trackId;
+  if (!trackId) {
+    return res.status(400).send("Missing trackId parameter.");
   }
 
-  // Estrae le credenziali dall'ambiente; queste variabili devono essere definite su Vercel.
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-  const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "https://spoty-linkhttp2svg.vercel.app/callback";
-
-  const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-  const tokenUrl = "https://accounts.spotify.com/api/token";
-
-  const params = new URLSearchParams();
-  params.append("grant_type", "authorization_code");
-  params.append("code", code);
-  params.append("redirect_uri", redirectUri);
-
   try {
+    // Ottiene l'access token usando client credentials flow
+    //Le variabili le trovi in VERCEL nella parte di Environment Variables
+    const clientId = process.env.SPOTIFY_CLIENT_ID;
+    const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+    const tokenUrl = "https://accounts.spotify.com/api/token";
+    const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+    const params = new URLSearchParams();
+    params.append("grant_type", "client_credentials");
+
     const tokenResponse = await fetch(tokenUrl, {
       method: "POST",
       headers: {
@@ -42,15 +39,28 @@ app.get('/callback', async (req, res) => {
     });
 
     if (!tokenResponse.ok) {
-      console.error("Errore nello scambio del codice per il token:", tokenResponse.status);
-      return res.status(tokenResponse.status).send("Errore nello scambio del codice per il token.");
+      console.error("Errore nel client credentials flow:", tokenResponse.status);
+      return res.status(tokenResponse.status).send("Errore nel recuperare l'access token.");
     }
 
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
 
-    // Dopo lo scambio, reindirizza l'utente alla home passando l'access token nella query string.
-    return res.redirect(`/?accessToken=${accessToken}`);
+    // Ora usa il token per ottenere i dettagli della traccia
+    const trackUrl = `https://api.spotify.com/v1/tracks/${trackId}`;
+    const trackResponse = await fetch(trackUrl, {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+
+    if (!trackResponse.ok) {
+      console.error("Errore nel recupero della traccia:", trackResponse.status);
+      return res.status(trackResponse.status).send("Errore nel recupero della traccia.");
+    }
+
+    const trackData = await trackResponse.json();
+    return res.json(trackData);
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal Server Error");
@@ -58,10 +68,10 @@ app.get('/callback', async (req, res) => {
 });
 
 /**
- * Funzione che separa i subpaths di un SVG generato da potrace:
+ * Funzione che separa ed unisce i subpaths di un SVG generato da potrace:
  * - Estrae il valore "d" dal primo <path>.
  * - Divide in subpaths (segmenti che iniziano con "M").
- * - Aggiunge "z" a ciascun subpath se non già presente.
+ * - Aggiunge "z" a ciascun subpath se non presente.
  * - Unisce i subpaths per ricostruire l'SVG.
  */
 function separateCompoundPath(svgString) {
@@ -90,8 +100,7 @@ function separateCompoundPath(svgString) {
 }
 
 /**
- * Converte un'immagine presa da un URL (ad es. lo Spotify Code in PNG)
- * in formato SVG tramite potrace e applica la funzione per correggere i subpaths.
+ * Converte un'immagine (da URL) in SVG tramite potrace e applica la correzione dei subpaths.
  */
 async function convertImageToSVG(url) {
   const response = await fetch(url);
@@ -105,7 +114,7 @@ async function convertImageToSVG(url) {
 
 /**
  * Endpoint per la conversione dell'immagine in SVG.
- * Riceve tramite query string l'URL dell'immagine da convertire e il filename desiderato.
+ * Riceve l'URL dell'immagine (lo Spotify Code in PNG) e il filename come query string.
  */
 app.get('/api/convert', async (req, res) => {
   const url = decodeURIComponent(req.query.url);

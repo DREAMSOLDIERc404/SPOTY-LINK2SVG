@@ -12,11 +12,11 @@
   ],
   "routes": [
     {
-      "src": "/callback",
+      "src": "/api/track",
       "dest": "/server.js"
     },
     {
-      "src": "/api/(.*)",
+      "src": "/api/convert",
       "dest": "/server.js"
     },
     {

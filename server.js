@@ -1,37 +1,80 @@
+// server.js
+
 import express from 'express';
 import potrace from 'potrace';
 import fetch from 'node-fetch';
 import { promisify } from 'util';
 
-// Promisifica potrace.trace per utilizzare async/await
 const trace = promisify(potrace.trace);
-
 const app = express();
 
 /**
- * Funzione che gestisce la separazione e il merge dei subpaths.
- * 1. Estrae l'attributo 'd' dal primo <path> dell'SVG.
- * 2. Splitta la stringa in subpaths (ogni segmento che inizia con "M").
- * 3. Aggiunge immediatamente "z" ad ogni subpath se non presente.
- * 4. Mette insieme tutti i subpaths in un unico comando "d".
- * 5. Ricostruisce l'SVG con un unico elemento <path> contenente il d attribute merge.
+ * Endpoint per gestire il callback di Spotify.
+ * Riceve il parametro "code" e lo scambia per un access token, utilizzando le variabili d'ambiente.
+ */
+app.get('/callback', async (req, res) => {
+  const code = req.query.code;
+  if (!code) {
+    return res.status(400).send("Missing code parameter.");
+  }
+
+  // Estrae le credenziali dall'ambiente; queste variabili devono essere definite su Vercel.
+  const clientId = process.env.SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+  const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "https://spoty-linkhttp2svg.vercel.app/callback";
+
+  const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+  const tokenUrl = "https://accounts.spotify.com/api/token";
+
+  const params = new URLSearchParams();
+  params.append("grant_type", "authorization_code");
+  params.append("code", code);
+  params.append("redirect_uri", redirectUri);
+
+  try {
+    const tokenResponse = await fetch(tokenUrl, {
+      method: "POST",
+      headers: {
+        "Authorization": `Basic ${basicAuth}`,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: params.toString()
+    });
+
+    if (!tokenResponse.ok) {
+      console.error("Errore nello scambio del codice per il token:", tokenResponse.status);
+      return res.status(tokenResponse.status).send("Errore nello scambio del codice per il token.");
+    }
+
+    const tokenData = await tokenResponse.json();
+    const accessToken = tokenData.access_token;
+
+    // Dopo lo scambio, reindirizza l'utente alla home passando l'access token nella query string.
+    return res.redirect(`/?accessToken=${accessToken}`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
+/**
+ * Funzione che separa i subpaths di un SVG generato da potrace:
+ * - Estrae il valore "d" dal primo <path>.
+ * - Divide in subpaths (segmenti che iniziano con "M").
+ * - Aggiunge "z" a ciascun subpath se non già presente.
+ * - Unisce i subpaths per ricostruire l'SVG.
  */
 function separateCompoundPath(svgString) {
-  // Estrai il d attribute dal primo <path>
   const pathRegex = /<path[^>]+d="([^"]+)"/;
   const match = svgString.match(pathRegex);
   if (!match) {
     return svgString;
   }
   const dAttribute = match[1].trim();
-
-  // Split: dividi in subpaths, ciascuno che inizia con "M"
   let subpaths = dAttribute.match(/(M[^M]*)/g);
   if (!subpaths) {
     return svgString;
   }
-
-  // Immediatamente aggiungi "z" ad ogni subpath se non è già presente
   subpaths = subpaths.map(subpath => {
     let trimmed = subpath.trim();
     if (!/[zZ]$/.test(trimmed)) {
@@ -39,36 +82,38 @@ function separateCompoundPath(svgString) {
     }
     return trimmed;
   });
-
-  // Merge: concatenare tutti i subpaths in un unico d attribute
   const mergedD = subpaths.join(" ");
-
-  // Ricomponi l'SVG con un unico elemento <path> che usa il d attribute merge
   const svgHeader = `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="250" viewBox="0 0 1000 250" version="1.1">`;
   const newPath = `<path d="${mergedD}" fill="#000000" fill-rule="evenodd" stroke="none"/>`;
   const svgClose = `</svg>`;
-
   return `${svgHeader}\n${newPath}\n${svgClose}`;
 }
 
+/**
+ * Converte un'immagine presa da un URL (ad es. lo Spotify Code in PNG)
+ * in formato SVG tramite potrace e applica la funzione per correggere i subpaths.
+ */
 async function convertImageToSVG(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error("Errore durante il fetch dell'immagine");
   const buffer = await response.buffer();
 
-  // Conversione dell'immagine in SVG tramite potrace
   let svg = await trace(buffer, { turdSize: 100, alphaMax: 1 });
-  
-  // Esegui subito la separazione, l'aggiunta dei "z" e il merge dei subpaths
   svg = separateCompoundPath(svg);
   return svg;
 }
 
+/**
+ * Endpoint per la conversione dell'immagine in SVG.
+ * Riceve tramite query string l'URL dell'immagine da convertire e il filename desiderato.
+ */
 app.get('/api/convert', async (req, res) => {
   const url = decodeURIComponent(req.query.url);
+  const filename = req.query.filename ? req.query.filename : 'spotify_code.svg';
   try {
     const svg = await convertImageToSVG(url);
     res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.send(svg);
   } catch (err) {
     console.error(err);
@@ -77,9 +122,7 @@ app.get('/api/convert', async (req, res) => {
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  app.listen(3000, () => {
-    console.log('Server in ascolto sulla porta 3000');
-  });
+  app.listen(3000, () => console.log('Server in ascolto sulla porta 3000'));
 }
 
 export default app;

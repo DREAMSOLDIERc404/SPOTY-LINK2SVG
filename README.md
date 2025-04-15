@@ -25,6 +25,6 @@ Gli URI di Spotify sono usati per generare Spotify link!
 <img src="https://scannables.scdn.co/uri/plain/jpeg/FFFFFF/black/640/spotify:track:4QAVzoQziO6ZobIjZtTFwo" alt="Spotify Link 2" width="400"/>
 
 ## NOTE!
-Il sito è stato deployted con [Vercel](https://vercel.com/dreamsoldierc404s-projects/spoty-linkhttp2svg)).  
+Il sito è stato deployted con [Vercel](https://vercel.com/dreamsoldierc404s-projects/spoty-linkhttp2svg).  
 Inoltre per generare il nome del file viene usata l'[api_spotify](https://developer.spotify.com/dashboard/dfa218e2b3464f14b66ef04022172359)  
 <span style="color:lightgrey">\*L'ID KEY e la SECRET KEY dell'API sono settate come variaibli d'ambiente in vercel in modo che siano inaccessibili!\*</span>

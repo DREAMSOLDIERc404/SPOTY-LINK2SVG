@@ -10,7 +10,7 @@ const app = express();
 
 /**
  * Endpoint per recuperare i dettagli di una traccia.
- * Usa client credentials flow per ottenere un access token e poi chiama l’API Spotify.
+ * Utilizza il Client Credentials Flow per ottenere un access token e poi richiama l'API di Spotify.
  */
 app.get('/api/track', async (req, res) => {
   const trackId = req.query.trackId;
@@ -19,16 +19,17 @@ app.get('/api/track', async (req, res) => {
   }
 
   try {
-    // Ottiene l'access token usando client credentials flow
-    //Le variabili le trovi in VERCEL nella parte di Environment Variables
+    // Ottieni le credenziali dalle variabili d'ambiente
     const clientId = process.env.SPOTIFY_CLIENT_ID;
     const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
     const tokenUrl = "https://accounts.spotify.com/api/token";
     const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
+    // Configura i parametri per il Client Credentials Flow
     const params = new URLSearchParams();
     params.append("grant_type", "client_credentials");
 
+    // Richiesta per ottenere l'access token
     const tokenResponse = await fetch(tokenUrl, {
       method: "POST",
       headers: {
@@ -46,7 +47,7 @@ app.get('/api/track', async (req, res) => {
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
 
-    // Ora usa il token per ottenere i dettagli della traccia
+    // Usa l'access token per ottenere i dettagli della traccia
     const trackUrl = `https://api.spotify.com/v1/tracks/${trackId}`;
     const trackResponse = await fetch(trackUrl, {
       headers: {
@@ -58,9 +59,10 @@ app.get('/api/track', async (req, res) => {
       console.error("Errore nel recupero della traccia:", trackResponse.status);
       return res.status(trackResponse.status).send("Errore nel recupero della traccia.");
     }
-
+    
     const trackData = await trackResponse.json();
     return res.json(trackData);
+
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal Server Error");
@@ -100,13 +102,17 @@ function separateCompoundPath(svgString) {
 }
 
 /**
- * Converte un'immagine (da URL) in SVG tramite potrace e applica la correzione dei subpaths.
+ * Converte un'immagine (da URL) in SVG tramite potrace.
+ * Utilizza response.arrayBuffer() per evitare deprecations.
  */
 async function convertImageToSVG(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error("Errore durante il fetch dell'immagine");
-  const buffer = await response.buffer();
-
+  
+  // Usa arrayBuffer() e converte in Buffer
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  
   let svg = await trace(buffer, { turdSize: 100, alphaMax: 1 });
   svg = separateCompoundPath(svg);
   return svg;
@@ -114,7 +120,7 @@ async function convertImageToSVG(url) {
 
 /**
  * Endpoint per la conversione dell'immagine in SVG.
- * Riceve l'URL dell'immagine (lo Spotify Code in PNG) e il filename come query string.
+ * Riceve tramite query string l'URL dell'immagine e il filename desiderato.
  */
 app.get('/api/convert', async (req, res) => {
   const url = decodeURIComponent(req.query.url);

@@ -2,8 +2,8 @@
 
 async function convertUrlToUri() {
   console.log("Funzione convertUrlToUri chiamata");
-  
-  // Ogni volta che premiamo il tasto, rimuoviamo qualsiasi preview o messaggio precedente.
+
+  // Pulizia di eventuali preview o messaggi precedenti
   document.getElementById("preview").innerHTML = "";
   document.getElementById("outputUri").innerHTML = "";
 
@@ -11,17 +11,14 @@ async function convertUrlToUri() {
   console.log("URL inserito:", url);
   const parts = url.split('/');
 
-  // Controllo di formato base dell'URL Spotify
+  // Controllo basilare del formato dell'URL Spotify
   if (parts.length < 5 || parts[2] !== "open.spotify.com") {
     console.log("URL non valido");
     setErrorMessage("Invalid Spotify URL");
     return;
   }
 
-  // Messaggio predefinito prima del risultato
-  document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
-
-  // Estrazione dell'ID e del tipo (gestendo il caso "intl-it")
+  // Tentativo di estrazione dell'ID e del tipo (gestisce anche "intl-it")
   let type, id;
   if (parts[3] === "intl-it") {
     type = parts[4];
@@ -40,7 +37,7 @@ async function convertUrlToUri() {
     const response = await fetch(`/api/track?trackId=${id}`);
     if (response.ok) {
       const track = await response.json();
-      // Sanitizza il nome della traccia: rimpiazza i caratteri non alfanumerici con "_"
+      // Sanitizza il nome della traccia: sostituisce i caratteri non alfanumerici con "_"
       trackName = track.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     } else {
       console.error("Errore nel recupero della traccia:", response.status);
@@ -53,12 +50,13 @@ async function convertUrlToUri() {
     return;
   }
 
-  // Visualizza lo Spotify Code e abilita il download dell'SVG al click
+  // Solo se tutto va bene si rigenera lo Spotify Code
   displaySpotifyCode(uri, `${trackName}.svg`);
 }
 
 function displaySpotifyCode(uri, downloadFilename) {
   console.log("Funzione displaySpotifyCode chiamata con URI:", uri);
+  // Genera gli URL per lo Spotify Code in PNG (versione per la preview e per la conversione in SVG)
   const spotifyCodeUrl = `https://scannables.scdn.co/uri/plain/png/000000/white/1000/${encodeURIComponent(uri)}`;
   const spotifyCodeUrlSVG = `https://scannables.scdn.co/uri/plain/png/FFFFFF/black/1000/${encodeURIComponent(uri)}`;
 
@@ -69,10 +67,19 @@ function displaySpotifyCode(uri, downloadFilename) {
   img.style.height = 'auto';
   img.style.cursor = 'pointer';
 
-  // Se l'immagine non viene caricata, segnala l'errore
+  // Se l'immagine non viene caricata, mostra il messaggio d'errore
   img.onerror = () => {
     console.error("Immagine non trovata.");
     setErrorMessage("Invalid Spotify URL");
+  };
+
+  // Quando l'immagine viene caricata con successo, mostra il messaggio e la preview
+  img.onload = () => {
+    // Mostra la scritta solo se l'immagine è stata caricata
+    document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
+    const previewDiv = document.getElementById("preview");
+    previewDiv.innerHTML = "";
+    previewDiv.appendChild(img);
   };
 
   img.addEventListener('click', () => {
@@ -94,18 +101,14 @@ function displaySpotifyCode(uri, downloadFilename) {
         setErrorMessage("Invalid Spotify URL");
       });
   });
-
-  // Visualizza la preview dell'immagine e il messaggio di download
-  document.getElementById("outputUri").innerHTML = "CLICCA SULL'IMMAGINE PER SCARICARE L'SVG";
-  const previewDiv = document.getElementById("preview");
-  previewDiv.innerHTML = ''; // giustifica ulteriormente la rimozione del contenuto precedente
-  previewDiv.appendChild(img);
 }
 
-// Funzione di utilità per mostrare un messaggio di errore in rosso
+// Funzione helper per mostrare un messaggio d'errore in rosso
 function setErrorMessage(message) {
   const outputDiv = document.getElementById("outputUri");
   outputDiv.innerHTML = `<span style="color: red;">${message}</span>`;
+  // In caso di errore, rimuove anche la preview se presente
+  document.getElementById("preview").innerHTML = "";
 }
 
 document.getElementById('submitButton').addEventListener('click', convertUrlToUri);

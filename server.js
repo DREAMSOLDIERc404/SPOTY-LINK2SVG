@@ -105,7 +105,9 @@ function separateCompoundPath(svgString) {
 async function convertImageToSVG(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error("Errore durante il fetch dell'immagine");
-  const buffer = await response.arrayBuffer();
+  // Usa arrayBuffer() per ottenere un ArrayBuffer e poi lo converte in un Buffer
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
   let svg = await trace(buffer, { turdSize: 100, alphaMax: 1 });
   svg = separateCompoundPath(svg);

@@ -29,7 +29,7 @@ app.get('/api/track', async (req, res) => {
     const params = new URLSearchParams();
     params.append("grant_type", "client_credentials");
 
-    const tokenResponse = await fetch(tokenUrl, {
+    const token = await fetch(tokenUrl, {
       method: "POST",
       headers: {
         "Authorization": `Basic ${basicAuth}`,
@@ -38,7 +38,7 @@ app.get('/api/track', async (req, res) => {
       body: params.toString()
     });
 
-    if (!tokenResponse.ok) {
+    if (!token.ok) {
       console.error("Errore nel client credentials flow:", tokenResponse.status);
       return res.status(tokenResponse.status).send("Errore nel recuperare l'access token.");
     }
@@ -105,7 +105,7 @@ function separateCompoundPath(svgString) {
 async function convertImageToSVG(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error("Errore durante il fetch dell'immagine");
-  const buffer = await response.buffer();
+  const buffer = await response.arrayBuffer();
 
   let svg = await trace(buffer, { turdSize: 100, alphaMax: 1 });
   svg = separateCompoundPath(svg);

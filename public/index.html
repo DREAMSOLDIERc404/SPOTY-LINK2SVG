@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Link to SVG</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="client.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify Link to SVG</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="client.js" defer></script>
 </head>
 <body>
-    <header>
-        <nav>
-            <h1>SPOTY-LINKHTTP2SVG</h1>
-        </nav>
-    </header>
-    <main>
-        <div>Inserisci un link Spotify:</div>
-        <input type="text" id="spotifyLink" placeholder="https://open.spotify.com/track/..." />
-        <button id="submitButton">Genera SVG Spotify_Link</button>
-        <div id="outputUri"></div>
-        <div id="preview"></div>
-    </main>
+  <header>
+    <nav>
+      <h1>SPOTY-LINKHTTP2SVG</h1>
+    </nav>
+  </header>
+  <main>
+    <!-- Elemento per il login (visualizza il link per l'autenticazione se non si ha il token) -->
+    <div id="login"></div>
+
+    <div>Inserisci un link Spotify:</div>
+    <input type="text" id="spotifyLink" placeholder="https://open.spotify.com/track/..." />
+    <button id="submitButton">Genera SVG Spotify_Link</button>
+    <div id="outputUri"></div>
+    <div id="preview"></div>
+  </main>
 </body>
 </html>
